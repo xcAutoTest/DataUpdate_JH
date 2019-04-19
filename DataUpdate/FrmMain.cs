@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace DataUpdate
 {
@@ -23,7 +24,10 @@ namespace DataUpdate
         private DataTable dt_UploadFailed = null;//已上传表
         private DataTable dt_ReadyUpload = null;//待上传、上传失败表
         private DataTable dt_ZjBdUpload = null;
+
+        public static ConnForSQL conforsql = new ConnForSQL();
         private DBControl carinfodb = new DBControl();//定义数据库操作
+
         private Interface InterfaceUpload = null;//定义联网操作
         private interfaceJinhua interfaceUploadJh = null;
         private bool _auto_upload = false;//初始定义上传模式为手动
@@ -31,6 +35,7 @@ namespace DataUpdate
         private bool _clearcarlistat500 = true;//用于判断程序是否在6点左右执行了一次定时清理待检列表
         private int Choosedindex = 0;//手动上传时被选中行的行号
         private Dictionary<string, string> JcZt = new Dictionary<string, string>();
+        private Dictionary<string, string> Dic_BDZJ = new Dictionary<string, string>();
 
         #region 更新上传过程状态表显示
         public delegate void udgv(string jylsh, string jycs, string column_name,  string zt);
@@ -66,10 +71,24 @@ namespace DataUpdate
             catch { }
         }
         #endregion
-        
+        private void test()
+        {
+            Hashtable hstb = new Hashtable();
+            hstb.Add("CLHP", "川A12345");
+            hstb.Add("CPYS", "蓝");
+            hstb.Add("CLLX","K34");
+
+            if (conforsql.InsertOrUpdate("车辆信息", " where CLHP='" + hstb["CLHP"] + "' and CPYS='" + hstb["CPYS"] + "'", hstb) > 0)
+            {
+                FileOpreate.SaveLog(hstb["CLHP"] + "车辆信息更新成功", "DBWrite1", 1);//3、更新待检列表信息
+            }
+            else
+                FileOpreate.SaveLog(hstb["CLHP"] + "更新车辆信息表失败，无法加入待检列表", "DBError2", 1);
+        }
         private void FrmMain_Load(object sender, EventArgs e)
         {
             #region 获取配置信息
+
             if (FileOpreate.GetDBConfig() == false)
             {
                 MessageBox.Show("获取数据库配置信息失败！");
@@ -96,7 +115,7 @@ namespace DataUpdate
             #endregion
 
             #region 功能测试区
-
+            InitJcZt();
             #endregion
 
             #region 显示登录界面
@@ -107,15 +126,24 @@ namespace DataUpdate
                 this.Close();
                 return;
             }
-
+            //test();
             FileOpreate.SaveLog("软件登录成功", "当前状态", 1);
             #endregion
 
             #region 控件初始位置设置
-            dataGridView_AlreadyUpload.Location = new Point(12, 28);
-            dataGridView_Ready_And_Failed.Location = new Point(12, 28);
-            dataGridView_BDZJ.Location = new Point(12, 28);
-            dataGridView_UploadFailed.Location = new Point(12, 28);
+
+            dataGridView_AlreadyUpload.Location = new Point(1, 28);
+            dataGridView_Ready_And_Failed.Location = new Point(1, 28);
+            dataGridView_BDZJ.Location = new Point(1, 28);
+            dataGridView_UploadFailed.Location = new Point(1, 28);
+
+            dataGridView_AlreadyUpload.Width = this.Size.Width - 20;
+            dataGridView_Ready_And_Failed.Width = this.Size.Width - 20;
+            dataGridView_BDZJ.Width = this.Size.Width - 20;
+            dataGridView_UploadFailed.Width = this.Size.Width - 20;
+
+            
+            dataGridView_Ready_And_Failed.BringToFront();
             #endregion
 
             #region 软件界面控件初始化
@@ -134,14 +162,14 @@ namespace DataUpdate
             dt_AlreadyUpload.Columns.Add("检测方法");
             dt_AlreadyUpload.Columns.Add("上传成功时间");
             dataGridView_AlreadyUpload.DataSource = dt_AlreadyUpload;
-            dataGridView_AlreadyUpload.Columns["检验流水号"].Width = 160;
-            dataGridView_AlreadyUpload.Columns["车辆号牌"].Width = 100;
-            dataGridView_AlreadyUpload.Columns["号牌种类"].Width = 100;
-            dataGridView_AlreadyUpload.Columns["线号"].Width = 80;
-            dataGridView_AlreadyUpload.Columns["检验次数"].Width = 80;
-            dataGridView_AlreadyUpload.Columns["检验时间"].Width = 160;
-            dataGridView_AlreadyUpload.Columns["检测方法"].Width = 100;
-            dataGridView_AlreadyUpload.Columns["上传成功时间"].Width = 160;
+            //dataGridView_AlreadyUpload.Columns["检验流水号"].Width = 160;
+            //dataGridView_AlreadyUpload.Columns["车辆号牌"].Width = 100;
+            //dataGridView_AlreadyUpload.Columns["号牌种类"].Width = 100;
+            //dataGridView_AlreadyUpload.Columns["线号"].Width = 80;
+            //dataGridView_AlreadyUpload.Columns["检验次数"].Width = 80;
+            //dataGridView_AlreadyUpload.Columns["检验时间"].Width = 160;
+            //dataGridView_AlreadyUpload.Columns["检测方法"].Width = 100;
+            //dataGridView_AlreadyUpload.Columns["上传成功时间"].Width = 160;
             #endregion
 
             #region 待上传表初始化并绑定数据源
@@ -157,94 +185,57 @@ namespace DataUpdate
             dt_ReadyUpload.Columns.Add("已处理状态");
             dt_ReadyUpload.Columns.Add("备注");
             dataGridView_Ready_And_Failed.DataSource = dt_ReadyUpload;
-            dataGridView_Ready_And_Failed.Columns["检验流水号"].Width = 100;
-            dataGridView_Ready_And_Failed.Columns["车辆号牌"].Width = 100;
-            dataGridView_Ready_And_Failed.Columns["号牌种类"].Width = 80;
-            dataGridView_Ready_And_Failed.Columns["线号"].Width = 60;
-            dataGridView_Ready_And_Failed.Columns["检验次数"].Width = 80;
-            dataGridView_Ready_And_Failed.Columns["检验时间"].Width = 100;
-            dataGridView_Ready_And_Failed.Columns["检测方法"].Width = 80;
-            dataGridView_Ready_And_Failed.Columns["当前状态"].Width = 80;
-            dataGridView_Ready_And_Failed.Columns["已处理状态"].Width = 100;
-            dataGridView_Ready_And_Failed.Columns["备注"].Width = 100;
+            //dataGridView_Ready_And_Failed.Columns["检验流水号"].Width = 100;
+            //dataGridView_Ready_And_Failed.Columns["车辆号牌"].Width = 100;
+            //dataGridView_Ready_And_Failed.Columns["号牌种类"].Width = 80;
+            //dataGridView_Ready_And_Failed.Columns["线号"].Width = 60;
+            //dataGridView_Ready_And_Failed.Columns["检验次数"].Width = 80;
+            //dataGridView_Ready_And_Failed.Columns["检验时间"].Width = 100;
+            //dataGridView_Ready_And_Failed.Columns["检测方法"].Width = 80;
+            //dataGridView_Ready_And_Failed.Columns["当前状态"].Width = 80;
+            //dataGridView_Ready_And_Failed.Columns["已处理状态"].Width = 100;
+            //dataGridView_Ready_And_Failed.Columns["备注"].Width = 100;
             #endregion
             #region 上传失败表初始化并绑定数据源
             dt_UploadFailed = new DataTable();
-            dt_ReadyUpload.Columns.Add("检验流水号");
-            dt_ReadyUpload.Columns.Add("车辆号牌");
-            dt_ReadyUpload.Columns.Add("号牌种类");
-            dt_ReadyUpload.Columns.Add("线号");
-            dt_ReadyUpload.Columns.Add("检验次数");
-            dt_ReadyUpload.Columns.Add("检验时间");
-            dt_ReadyUpload.Columns.Add("检测方法");
-            dt_ReadyUpload.Columns.Add("当前状态");
-            dt_ReadyUpload.Columns.Add("已处理状态");
-            dt_ReadyUpload.Columns.Add("备注");
+            dt_UploadFailed.Columns.Add("检验流水号");
+            dt_UploadFailed.Columns.Add("车辆号牌");
+            dt_UploadFailed.Columns.Add("号牌种类");
+            dt_UploadFailed.Columns.Add("线号");
+            dt_UploadFailed.Columns.Add("检验次数");
+            dt_UploadFailed.Columns.Add("检验时间");
+            dt_UploadFailed.Columns.Add("检测方法");
+            dt_UploadFailed.Columns.Add("当前状态");
+            dt_UploadFailed.Columns.Add("已处理状态");
+            dt_UploadFailed.Columns.Add("上传失败原因");
             dataGridView_UploadFailed.DataSource = dt_UploadFailed;
-            dataGridView_UploadFailed.Columns["检验流水号"].Width = 100;
-            dataGridView_UploadFailed.Columns["车辆号牌"].Width = 100;
-            dataGridView_UploadFailed.Columns["号牌种类"].Width = 80;
-            dataGridView_UploadFailed.Columns["线号"].Width = 60;
-            dataGridView_UploadFailed.Columns["检验次数"].Width = 80;
-            dataGridView_UploadFailed.Columns["检验时间"].Width = 100;
-            dataGridView_UploadFailed.Columns["检测方法"].Width = 80;
-            dataGridView_UploadFailed.Columns["当前状态"].Width = 80;
-            dataGridView_UploadFailed.Columns["已处理状态"].Width = 100;
-            dataGridView_UploadFailed.Columns["备注"].Width = 100;
+            //dataGridView_UploadFailed.Columns["检验流水号"].Width = 100;
+            //dataGridView_UploadFailed.Columns["车辆号牌"].Width = 100;
+            //dataGridView_UploadFailed.Columns["号牌种类"].Width = 80;
+            //dataGridView_UploadFailed.Columns["线号"].Width = 60;
+            //dataGridView_UploadFailed.Columns["检验次数"].Width = 80;
+            //dataGridView_UploadFailed.Columns["检验时间"].Width = 100;
+            //dataGridView_UploadFailed.Columns["检测方法"].Width = 80;
+            //dataGridView_UploadFailed.Columns["当前状态"].Width = 80;
+            //dataGridView_UploadFailed.Columns["已处理状态"].Width = 100;
+            //dataGridView_UploadFailed.Columns["上传失败原因"].Width = 100;
             #endregion
             #region 自检标定记录表初始化
             dt_ZjBdUpload = new DataTable();
+            dt_ZjBdUpload.Columns.Add("ID");
+            dt_ZjBdUpload.Columns.Add("内容");
             dt_ZjBdUpload.Columns.Add("线号");
-            dt_ZjBdUpload.Columns.Add("Data1");
-            dt_ZjBdUpload.Columns.Add("Data2");
-            dt_ZjBdUpload.Columns.Add("Data3");
-            dt_ZjBdUpload.Columns.Add("Data4");
-            dt_ZjBdUpload.Columns.Add("Data5");
-            dt_ZjBdUpload.Columns.Add("Data6");
-            dt_ZjBdUpload.Columns.Add("Data7");
-            dt_ZjBdUpload.Columns.Add("Data8");
-            dt_ZjBdUpload.Columns.Add("Data9");
-            dt_ZjBdUpload.Columns.Add("Data10");
-            dt_ZjBdUpload.Columns.Add("Data11");
-            dt_ZjBdUpload.Columns.Add("Data12");
-            dt_ZjBdUpload.Columns.Add("Data13");
-            dt_ZjBdUpload.Columns.Add("Data14");
-            dt_ZjBdUpload.Columns.Add("Data15");
+            dt_ZjBdUpload.Columns.Add("项目");
+            dt_ZjBdUpload.Columns.Add("结果");
+            dt_ZjBdUpload.Columns.Add("状态");
+            dt_ZjBdUpload.Columns.Add("上传次数");
+            dt_ZjBdUpload.Columns.Add("操作员");
+            dataGridView_BDZJ.DataSource = dt_ZjBdUpload;
 
-            DataTable line_inf = carinfodb.getLineInfo();
-            if (line_inf != null && line_inf.Rows.Count > 0)
-            {
-                for (int i = 0; i < line_inf.Rows.Count; i++)
-                {
-                    DataRow dr_new = dt_ZjBdUpload.NewRow();
-                    dr_new["线号"] = line_inf.Rows[i]["LINEID"].ToString();
-                    dr_new["Data1"] = "未上传";
-                    dr_new["Data2"] = "未上传";
-                    dr_new["Data3"] = "未上传";
-                    dr_new["Data4"] = "未上传";
-                    dr_new["Data5"] = "未上传";
-                    dr_new["Data6"] = "未上传";
-                    dr_new["Data7"] = "未上传";
-                    dr_new["Data8"] = "未上传";
-                    dr_new["Data9"] = "未上传";
-                    dr_new["Data10"] = "未上传";
-                    dr_new["Data11"] = "未上传";
-                    dr_new["Data12"] = "未上传";
-                    dr_new["Data13"] = "未上传";
-                    dr_new["Data14"] = "未上传";
-                    dr_new["Data15"] = "未上传";
-                    dt_ZjBdUpload.Rows.Add(dr_new);
-                }
-            }
-            else
-            {
-                MessageBox.Show("获取检测线配置信息失败，请检测设置后重试！");
-                return;
-            }
+
+
             #endregion
 
-            //初始化检测状态
-            InitJcZt();
             #endregion
 
             #region 联网初始化
@@ -297,25 +288,30 @@ namespace DataUpdate
                             string temp_status = "同步平台时间成功，当前时间："+ server_time.ToString();
                              _whether_Connected = true;
 
-                            /*金华暂时不获取列表，由康总的外检服务程序获取列表
+                            /*金华暂时不获取列表，由康总的外检服务程序获取列表*/
                             if (FileOpreate.UpdateAutoGetCarList == 1)//自动定时获取待检列表
                             {
+                                timerGetWaitCarList_Tick(null, null);
                                 timerGetWaitCarList.Enabled = true;
                                 timerGetWaitCarList.Start();
                                 temp_status = temp_status + " | 自动获取待检列表，时间间隔：" + FileOpreate.UpdateGetWaitListTime.ToString() + "s";
-                            }*/
+                            }
                             if (_auto_upload)//自动上传
                             {
+                                checkBox1.Checked = true;
                                 timerBdZjUpdate.Enabled = true;//标定自检数据自动上传定时器
                                 timerUploadTestData.Enabled = true;//检测数据自动上传定时器
                                 timerRefreshFaileData.Enabled = true;
-                                开始自动上传ToolStripMenuItem.Enabled = false;
-                                关闭自动上传ToolStripMenuItem.Enabled = true;
+                                //开始自动上传ToolStripMenuItem.Enabled = false;
+                                //关闭自动上传ToolStripMenuItem.Enabled = true;
                                 temp_status = temp_status + " | 数据自动上传开启，请先完成各线的标定自检操作，程序将自动上传标定自检记录！";
                                 //timerBdZjUpdate.Start();
                             }
                             else
+                            {
+                                checkBox1.Checked = false;
                                 temp_status = temp_status + " | 请选择一条数据进行手动上传";
+                            }
                             tSSL_Status.Text = temp_status;
                         }
                         else
@@ -380,8 +376,6 @@ namespace DataUpdate
             {
                 timerUploadTestData.Enabled = true;
                 timerRefreshFaileData.Enabled = true;
-                开始自动上传ToolStripMenuItem.Enabled = false;
-                关闭自动上传ToolStripMenuItem.Enabled = true;
                 tSSL_Status.Text = "状态：已开启数据自动上传！";
             }
             else
@@ -392,12 +386,12 @@ namespace DataUpdate
         {
             timerUploadTestData.Enabled = false;
             timerRefreshFaileData.Enabled = false;
-            开始自动上传ToolStripMenuItem.Enabled = true;
             tSSL_Status.Text = "状态：数据自动上传关闭！";
         }
 
         private void 待上传数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            dataGridView_UploadFailed.Visible = false;
             dataGridView_AlreadyUpload.Visible = false;
             dataGridView_BDZJ.Visible = false;
             dataGridView_Ready_And_Failed.Visible = true;
@@ -406,6 +400,7 @@ namespace DataUpdate
 
         private void 已上传数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            dataGridView_UploadFailed.Visible = false;
             dataGridView_AlreadyUpload.Visible = true;
             dataGridView_Ready_And_Failed.Visible = false;
             tSSL_Status.Text = "状态：当前显示已上传数据列表！";
@@ -703,15 +698,60 @@ namespace DataUpdate
         private void timerBdZjUpdate_Tick(object sender, EventArgs e)
         {
             #region 自检数据上传
+            timerUploadBdzjCount++;//
+            if (timerUploadBdzjCount > 10)
+                timerUploadBdzjCount = 0;
+            toolStripProgressBar3.Value = timerUploadBdzjCount;
+            //= 0, timerUploadBdzjCount = 0,timerGetWaitListCount = 0;
+            DataTable SelfCheckDataTable = carinfodb.getSelfCheckData(maxUploadTimes);
+
+            DataTable BDDataTable = carinfodb.getBDData(maxUploadTimes);//获取当天未上传标定数据
+            dt_ZjBdUpload.Clear();
+            if (SelfCheckDataTable != null && SelfCheckDataTable.Rows.Count > 0)
+            {
+                for(int i=0;i<SelfCheckDataTable.Rows.Count;i++)
+                {
+                    DataRow dr = dt_ZjBdUpload.NewRow();
+                    dr["ID"] = SelfCheckDataTable.Rows[i]["ID"].ToString();
+                    dr["内容"] = "自检";
+                    dr["线号"] = SelfCheckDataTable.Rows[i]["JCGWH"].ToString();
+                    dr["项目"] =Dic_BDZJ.GetValue( SelfCheckDataTable.Rows[i]["LX"].ToString(),"");
+                    dr["结果"] = SelfCheckDataTable.Rows[i]["ZJJG"].ToString()=="1"?"合格":"不合格";
+                    dr["状态"] =SelfCheckDataTable.Rows[i]["ZT"].ToString()=="1"?"已上传":"未上传";
+                    dr["上传次数"] = SelfCheckDataTable.Rows[i]["BY1"].ToString();
+                    dr["操作员"] = SelfCheckDataTable.Rows[i]["CZY"].ToString();
+                    dt_ZjBdUpload.Rows.Add(dr);
+                }
+
+            }
+            if (BDDataTable != null && BDDataTable.Rows.Count > 0)
+            {
+                for (int i = 0; i < BDDataTable.Rows.Count; i++)
+                {
+                    DataRow dr = dt_ZjBdUpload.NewRow();
+                    dr["ID"] = BDDataTable.Rows[i]["ID"].ToString();
+                    dr["内容"] = "标定";
+                    dr["线号"] = BDDataTable.Rows[i]["JCGWH"].ToString();
+                    dr["项目"] = Dic_BDZJ.GetValue(BDDataTable.Rows[i]["LX"].ToString(), "");
+                    dr["结果"] = BDDataTable.Rows[i]["BDJG"].ToString() ;
+                    dr["状态"] = BDDataTable.Rows[i]["ZT"].ToString() == "1" ? "已上传" : "未上传";
+                    dr["上传次数"] = BDDataTable.Rows[i]["BY1"].ToString();
+                    dr["操作员"] = BDDataTable.Rows[i]["CZY"].ToString();
+                    dt_ZjBdUpload.Rows.Add(dr);
+                }
+
+            }
+            dataGridView_BDZJ.DataSource = dt_ZjBdUpload;
             try
             {
-                DataTable SelfCheckDataTable = carinfodb.getSelfCheckData(maxUploadTimes);
+                
                 if (SelfCheckDataTable != null && SelfCheckDataTable.Rows.Count > 0)
                 {
                     FileOpreate.SaveLog("自动开始进行自检数据上传，总共有：" + SelfCheckDataTable.Rows.Count + "行数据！", "自检数据上传", 1);
                     for (int i = 0; i < SelfCheckDataTable.Rows.Count; i++)
                     {
-                        UpdateZj(SelfCheckDataTable.Rows[i]);
+                        if(SelfCheckDataTable.Rows[i]["ZT"].ToString()=="0"&&int.Parse(SelfCheckDataTable.Rows[i]["BY1"].ToString())<maxUploadTimes)
+                            UpdateZj(SelfCheckDataTable.Rows[i]);
                         /*
                         Thread JZHXSelfCheckUploadThread = new Thread(new ParameterizedThreadStart(UpdateZj));//新建一个标定数据上传线程
                         JZHXSelfCheckUploadThread.Start(SelfCheckDataTable.Rows[i]);//开始上传线程
@@ -726,7 +766,6 @@ namespace DataUpdate
             }
             try
             {
-                DataTable BDDataTable = carinfodb.getBDData(maxUploadTimes);//获取当天未上传标定数据
                 if (BDDataTable != null && BDDataTable.Rows.Count > 0)
                 {
                     FileOpreate.SaveLog("手动开始进行标定数据上传，总共有：" + BDDataTable.Rows.Count + "行数据！", "标定数据上传", 1);
@@ -736,7 +775,9 @@ namespace DataUpdate
                         /*
                         Thread SpeedBDUploadThread = new Thread(new ParameterizedThreadStart(UpdateBD));//新建一个标定数据上传线程
                         SpeedBDUploadThread.Start(BDDataTable.Rows[i]);//开始上传线程*/
-                        UpdateBD(BDDataTable.Rows[i]);//不放在进程里面，以免上传时间长重复进入上传进程
+
+                        if (BDDataTable.Rows[i]["ZT"].ToString() == "0" && int.Parse(BDDataTable.Rows[i]["BY1"].ToString()) < maxUploadTimes)
+                            UpdateBD(BDDataTable.Rows[i]);//不放在进程里面，以免上传时间长重复进入上传进程
                     }
                 }
             }
@@ -762,29 +803,35 @@ namespace DataUpdate
                     _clearcarlistat500 = false;
                     FileOpreate.SaveClearTime(System.DateTime.Now.ToString("yyyy-MM-dd"));
 
-                    //重置自检标定上传记录
-                    if (dt_ZjBdUpload != null && dt_ZjBdUpload.Rows.Count > 0)
-                    {
-                        for (int i = 0; i < dt_ZjBdUpload.Rows.Count; i++)
-                        {
-                            for (int j = 1; j < 16; j++)
-                            {
-                                dt_ZjBdUpload.Rows[i][j] = "未上传";
-                            }
-                        }
-                    }
+                    ////重置自检标定上传记录
+                    //if (dt_ZjBdUpload != null && dt_ZjBdUpload.Rows.Count > 0)
+                    //{
+                    //    for (int i = 0; i < dt_ZjBdUpload.Rows.Count; i++)
+                    //    {
+                    //        for (int j = 1; j < 16; j++)
+                    //        {
+                    //            dt_ZjBdUpload.Rows[i][j] = "未上传";
+                    //        }
+                    //    }
+                    //}
                 }
                 if (!_clearcarlistat500 && DateTime.Now.CompareTo(Convert.ToDateTime("05:30")) > 0)
                     _clearcarlistat500 = true;
             }
             catch {}
             #endregion
-            
+
+
             #region 获取平台待检列表
             try
             {
+                timerGetWaitListCount++;//
+                if (timerGetWaitListCount > 10)
+                    timerGetWaitListCount = 0;
+                toolStripProgressBar2.Value = timerGetWaitListCount;
+                //= 0, timerUploadBdzjCount = 0,timerGetWaitListCount = 0;
                 string error_info1 = "";
-                DataTable dtWaitCarListInNet = InterfaceUpload.GetVehicleList(out error_info1);//联网获取待检车辆信息
+                DataTable dtWaitCarListInNet = interfaceUploadJh.GetVehicleList();//联网获取待检车辆信息
                 if (dtWaitCarListInNet == null)
                 {
                     FileOpreate.SaveLog("获取错误,原因：" + error_info1, "获取平台待检列表", 1);
@@ -798,10 +845,10 @@ namespace DataUpdate
                         FileOpreate.SaveLog("获取错误,原因：" + error_info1, "获取本地待检列表", 1);
                         return;
                     }
-                    
-                    if (FileOpreate.Interface_Area == 0)
+
+                    if (true)
                     {
-                        #region 山东联网
+                        #region 通用联网
                         //删除本地待检列表在联网待检列表中不存在的项 
                         for (int i = 0; i < dtWaitCarList.Rows.Count; i++)
                         {
@@ -846,61 +893,8 @@ namespace DataUpdate
                         {
                             for (int i = 0; i < dtWaitCarListInNet.Rows.Count; i++)
                             {
-                                string jcff = "";
-                                switch (dtWaitCarListInNet.Rows[i]["jcff"].ToString())
-                                {
-                                    case "1":
-                                        if (FileOpreate.jcff.sds)
-                                        {
-                                            jcff = "SDS";
-                                            break;
-                                        }
-                                        else
-                                            continue;
-                                    case "2":
-                                        if (FileOpreate.jcff.asm)
-                                        {
-                                            jcff = "ASM";
-                                            break;
-                                        }
-                                        else
-                                            continue;
-                                    case "3":
-                                        if (FileOpreate.jcff.vmas)
-                                        {
-                                            jcff = "VMAS";
-                                            break;
-                                        }
-                                        else
-                                            continue;
-                                    case "4":
-                                        if (FileOpreate.jcff.jzjs)
-                                        {
-                                            jcff = "JZJS";
-                                            break;
-                                        }
-                                        else
-                                            continue;
-                                    case "5":
-                                        if (FileOpreate.jcff.zyjs)
-                                        {
-                                            jcff = "ZYJS";
-                                            break;
-                                        }
-                                        else
-                                            continue;
-                                    case "8":
-                                        if (FileOpreate.jcff.sds)
-                                        {
-                                            jcff = "SDSM";
-                                            break;
-                                        }
-                                        else
-                                            continue;
-                                    default:
-                                        FileOpreate.SaveLog("该检测线不支持" + dtWaitCarListInNet.Rows[i]["hphm"].ToString() + "要求使用的检测方法：" + dtWaitCarListInNet.Rows[i]["jcff"].ToString(), "InterfaceError4", 1);
-                                        continue;
-                                }
+                                string jcff = dtWaitCarListInNet.Rows[i]["jcff"].ToString();
+                                
                                 string jylsh = dtWaitCarListInNet.Rows[i]["jylsh"].ToString();
                                 string jycs = dtWaitCarListInNet.Rows[i]["jycs"].ToString();
                                 string hphm = dtWaitCarListInNet.Rows[i]["hphm"].ToString();
@@ -911,382 +905,58 @@ namespace DataUpdate
                                 if (dr_CheckWaitList.Count() == 0 && dr_CheckAlreadUpload.Count() == 0)//说明：待检车辆没有该车信息，先更新该车信息、再更新待检列表信息
                                 {
                                     //1、获取车辆信
-                                    string error_info2 = "";
-                                    DataTable dt_CarInfoInNet = InterfaceUpload.GetCarInfoByLshSD(jylsh, jycs, out error_info2);
-                                    if (dt_CarInfoInNet != null)
-                                    {
-                                        //2、更新车辆信息
-                                        CARINF new_car = new CARINF();
-                                        new_car.CLHP = dt_CarInfoInNet.Rows[0]["hphm"].ToString();
-                                        new_car.CPYS = dt_CarInfoInNet.Rows[0]["hpys"].ToString();
-                                        new_car.HPZL = dt_CarInfoInNet.Rows[0]["hpzl"].ToString();
-                                        new_car.CLLX = dt_CarInfoInNet.Rows[0]["cllx"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("cpxh"))
-                                            new_car.XH = dt_CarInfoInNet.Rows[0]["cpxh"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("cpmc"))
-                                            new_car.PP = dt_CarInfoInNet.Rows[0]["cpmc"].ToString();
-                                        new_car.CLSBM = dt_CarInfoInNet.Rows[0]["clsbm"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("clscqy"))
-                                            new_car.SCQY = dt_CarInfoInNet.Rows[0]["clscqy"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjxh"))
-                                            new_car.FDJXH = dt_CarInfoInNet.Rows[0]["fdjxh"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjscqy"))
-                                            new_car.FDJSCQY = dt_CarInfoInNet.Rows[0]["fdjscqy"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjh"))
-                                            new_car.FDJHM = dt_CarInfoInNet.Rows[0]["fdjh"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjpl"))
-                                            new_car.FDJPL = dt_CarInfoInNet.Rows[0]["fdjpl"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjedzs"))
-                                            new_car.EDZS = dt_CarInfoInNet.Rows[0]["fdjedzs"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjedgl"))
-                                            new_car.EDGL = dt_CarInfoInNet.Rows[0]["fdjedgl"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("syxz"))
-                                            new_car.SYXZ = dt_CarInfoInNet.Rows[0]["syxz"].ToString();
-                                        new_car.ZCRQ = DateTime.Parse(dt_CarInfoInNet.Rows[0]["ccdjrq"].ToString());
-                                        new_car.SCRQ = DateTime.Parse(dt_CarInfoInNet.Rows[0]["ccrq"].ToString());
-                                        if (dt_CarInfoInNet.Columns.Contains("czmc"))
-                                            new_car.CZ = dt_CarInfoInNet.Rows[0]["czmc"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("lxdh"))
-                                            new_car.LXDH = dt_CarInfoInNet.Rows[0]["lxdh"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("lxdz"))
-                                            new_car.CZDZ = dt_CarInfoInNet.Rows[0]["lxdz"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("pfbz"))
-                                            new_car.ZXBZ = dt_CarInfoInNet.Rows[0]["pfbz"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("bsqxs"))
-                                            new_car.BSQXS = dt_CarInfoInNet.Rows[0]["bsqxs"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("jqfs"))
-                                            new_car.JQFS = dt_CarInfoInNet.Rows[0]["jqfs"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("ryzl"))
-                                            new_car.RLZL = dt_CarInfoInNet.Rows[0]["ryzl"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("gyfs"))
-                                            new_car.GYFS = dt_CarInfoInNet.Rows[0]["gyfs"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("qdfs"))
-                                            new_car.QDXS = dt_CarInfoInNet.Rows[0]["qdfs"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("zdzzl"))
-                                            new_car.ZZL = dt_CarInfoInNet.Rows[0]["zdzzl"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("jzzl"))
-                                            new_car.JZZL = dt_CarInfoInNet.Rows[0]["jzzl"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("zbzl"))
-                                            new_car.ZBZL = dt_CarInfoInNet.Rows[0]["zbzl"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("qgs"))
-                                            new_car.QGS = dt_CarInfoInNet.Rows[0]["qgs"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("obd"))
-                                            new_car.OBD = dt_CarInfoInNet.Rows[0]["obd"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("qdltqy"))
-                                            new_car.QDLTQY = dt_CarInfoInNet.Rows[0]["qdltqy"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("chzhq"))
-                                            new_car.JHZZ = dt_CarInfoInNet.Rows[0]["chzhq"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("rygg"))
-                                            new_car.RYPH = dt_CarInfoInNet.Rows[0]["rygg"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("sjcys"))
-                                            new_car.HDZK = dt_CarInfoInNet.Rows[0]["sjcys"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("ssxq"))
-                                            new_car.SSXQ = dt_CarInfoInNet.Rows[0]["ssxq"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("dws"))
-                                            new_car.DWS = dt_CarInfoInNet.Rows[0]["dws"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("jclx"))
-                                            new_car.JCLB = dt_CarInfoInNet.Rows[0]["jclx"].ToString();
 
-                                        if (carinfodb.UpdateOrInsertCarInf(new_car) == true)
-                                        {
-                                            FileOpreate.SaveLog(hphm + "车辆信息更新成功", "DBWrite1", 1);//3、更新待检列表信息
-                                            if (carinfodb.addCarToWaitList(hphm + "T" + DateTime.Now.ToString("yyyyMMddHHmmss"), jylsh, jycs, hphm, dtWaitCarListInNet.Rows[i]["hpys"].ToString(), dtWaitCarListInNet.Rows[i]["hpzl"].ToString(), dtWaitCarListInNet.Rows[i]["ljxslc"].ToString(), jcff, dtWaitCarListInNet.Rows[i]["jczbh"].ToString(), dtWaitCarListInNet.Rows[i]["dlsj"].ToString(), ""))
-                                                FileOpreate.SaveLog(hphm + "/" + jcff + "方法待检车辆信息更新成功", "DBWrite2", 1);
-                                            else
-                                                FileOpreate.SaveLog(hphm + "/" + jcff + "方法待检车辆信息更新失败", "DBError1", 1);
-                                        }
+                                    //2、更新车辆信息
+                                    Hashtable hstb = new Hashtable();
+                                    hstb.Add("CLHP", dtWaitCarListInNet.Rows[i]["hphm"].ToString());
+                                    hstb.Add("CPYS", dtWaitCarListInNet.Rows[i]["hpys"].ToString());
+                                    hstb.Add("HPZL", dtWaitCarListInNet.Rows[i]["hpzl"].ToString());
+                                    hstb.Add("CLLX", dtWaitCarListInNet.Rows[i]["cllx"].ToString());
+                                    hstb.Add("XH", dtWaitCarListInNet.Rows[i]["cpxh"].ToString());
+                                    hstb.Add("PP", dtWaitCarListInNet.Rows[i]["cpmc"].ToString());
+                                    hstb.Add("CLSBM", dtWaitCarListInNet.Rows[i]["clsbm"].ToString());
+                                    hstb.Add("SCQY", dtWaitCarListInNet.Rows[i]["clscqy"].ToString());
+                                    hstb.Add("FDJXH", dtWaitCarListInNet.Rows[i]["fdjxh"].ToString());
+                                    hstb.Add("FDJSCQY", dtWaitCarListInNet.Rows[i]["fdjscqy"].ToString());
+                                    hstb.Add("FDJHM", dtWaitCarListInNet.Rows[i]["fdjh"].ToString());
+                                    hstb.Add("FDJPL", dtWaitCarListInNet.Rows[i]["fdjpl"].ToString());
+                                    hstb.Add("EDZS", dtWaitCarListInNet.Rows[i]["fdjedzs"].ToString());
+                                    hstb.Add("EDGL", dtWaitCarListInNet.Rows[i]["fdjedgl"].ToString());
+                                    hstb.Add("SYXZ", dtWaitCarListInNet.Rows[i]["syxz"].ToString());
+                                    hstb.Add("ZCRQ", DateTime.Parse(dtWaitCarListInNet.Rows[i]["ccdjrq"].ToString()));
+                                    hstb.Add("SCRQ", DateTime.Parse(dtWaitCarListInNet.Rows[i]["ccrq"].ToString()));
+                                    hstb.Add("CZ", dtWaitCarListInNet.Rows[i]["czmc"].ToString());
+                                    hstb.Add("LXDH", dtWaitCarListInNet.Rows[i]["lxdh"].ToString());
+                                    hstb.Add("CZDZ", dtWaitCarListInNet.Rows[i]["lxdz"].ToString());
+                                    hstb.Add("ZXBZ", dtWaitCarListInNet.Rows[i]["pfbz"].ToString());
+                                    hstb.Add("BSQXS", dtWaitCarListInNet.Rows[i]["bsqxs"].ToString());
+                                    hstb.Add("JQFS", dtWaitCarListInNet.Rows[i]["jqfs"].ToString());
+                                    hstb.Add("RLZL", dtWaitCarListInNet.Rows[i]["ryzl"].ToString());
+                                    hstb.Add("GYFS", dtWaitCarListInNet.Rows[i]["gyfs"].ToString());
+                                    hstb.Add("QDXS", dtWaitCarListInNet.Rows[i]["qdfs"].ToString());
+                                    hstb.Add("ZZL", dtWaitCarListInNet.Rows[i]["zdzzl"].ToString());
+                                    hstb.Add("JZZL", dtWaitCarListInNet.Rows[i]["jzzl"].ToString());
+                                    hstb.Add("ZBZL", dtWaitCarListInNet.Rows[i]["zbzl"].ToString());
+                                    hstb.Add("QGS", dtWaitCarListInNet.Rows[i]["qgs"].ToString());
+                                    hstb.Add("OBD", dtWaitCarListInNet.Rows[i]["obd"].ToString());
+                                    hstb.Add("QDLTQY", dtWaitCarListInNet.Rows[i]["qdltqy"].ToString());
+                                    hstb.Add("JHZZ", dtWaitCarListInNet.Rows[i]["chzhq"].ToString());
+                                    hstb.Add("RYPH", dtWaitCarListInNet.Rows[i]["rygg"].ToString());
+                                    hstb.Add("HDZK", dtWaitCarListInNet.Rows[i]["sjcys"].ToString());
+                                    hstb.Add("SSXQ", dtWaitCarListInNet.Rows[i]["ssxq"].ToString());
+                                    hstb.Add("DWS", dtWaitCarListInNet.Rows[i]["dws"].ToString());
+                                    hstb.Add("JCLB", dtWaitCarListInNet.Rows[i]["jclx"].ToString());
+
+                                    if (conforsql.InsertOrUpdate("车辆信息"," where CLHP='"+ dtWaitCarListInNet.Rows[i]["hphm"].ToString()+"' and CPYS='"+ dtWaitCarListInNet.Rows[i]["hpys"].ToString() + "'", hstb) > 0)
+                                    {
+                                        FileOpreate.SaveLog(hphm + "车辆信息更新成功", "DBWrite1", 1);//3、更新待检列表信息
+                                        if (carinfodb.addCarToWaitList(hphm + "T" + DateTime.Now.ToString("yyyyMMddHHmmss"), jylsh, jycs, hphm, dtWaitCarListInNet.Rows[i]["hpys"].ToString(), dtWaitCarListInNet.Rows[i]["hpzl"].ToString(), dtWaitCarListInNet.Rows[i]["ljxslc"].ToString(), jcff, dtWaitCarListInNet.Rows[i]["jczbh"].ToString(), dtWaitCarListInNet.Rows[i]["dlsj"].ToString(), ""))
+                                            FileOpreate.SaveLog(hphm + "/" + jcff + "方法待检车辆信息更新成功", "DBWrite2", 1);
                                         else
-                                            FileOpreate.SaveLog(hphm + "更新车辆信息表失败，无法加入待检列表", "DBError2", 1);
+                                            FileOpreate.SaveLog(hphm + "/" + jcff + "方法待检车辆信息更新失败", "DBError1", 1);
                                     }
                                     else
-                                        FileOpreate.SaveLog(hphm + "/" + jylsh + "/" + jycs + "查询车辆信息失败或未查到该车信息", "InterfaceError5", 1);
-                                }
-                            }
-                        }
-                        catch (Exception er)
-                        {
-                            FileOpreate.SaveLog("错误原因：" + er.Message, "更新车辆信息及待检列表信息错误", 1);
-                        }
-                        #endregion
-                    }
-                    else if (FileOpreate.Interface_Area == 1 || FileOpreate.Interface_Area == 2 || FileOpreate.Interface_Area == 3)
-                    {
-                        #region 辽宁\内蒙\贵州
-                        //删除本地待检列表在联网待检列表中不存在的项 
-                        for (int i = 0; i < dtWaitCarList.Rows.Count; i++)
-                        {
-                            string check_jylsh = dtWaitCarList.Rows[i]["JYLSH"].ToString();//本地列表待检车辆流水号
-                            string check_jycs = dtWaitCarList.Rows[i]["JCCS"].ToString();//本地列表待检车辆检验次数
-                            //查询联网待检车辆是否已存在本地列表中，无时更新车辆信息及本地待检列表
-                            DataRow[] dr_check_alive_waitlist = dtWaitCarListInNet.Select("jylsh='" + check_jylsh + "' and testtimes='" + check_jycs + "'");
-                            if (dr_check_alive_waitlist == null || dr_check_alive_waitlist.Count() == 0)
-                            {
-                                //本地待检车辆信息在网上查不到，则删除本地已有待检车辆信息
-                                try
-                                {
-                                    string strDeleteResult = "状态：流水号" + check_jylsh + "，检验次数" + check_jycs;
-                                    if (carinfodb.deleteCarInWaitlist(check_jylsh, check_jycs))//删除本地待检列表
-                                        strDeleteResult += "本地待检列表删除成功|";
-                                    else
-                                        strDeleteResult += "本地待检列表删除失败|";
-                                    if (carinfodb.DeleteCarTestStatus(check_jylsh, check_jycs))//删除车辆检测状态表
-                                        strDeleteResult += "本地车辆检测状态表删除成功|";
-                                    else
-                                        strDeleteResult += "本地车辆检测状态表删除失败|";
-                                    DataRow[] ReadyToDelete = dt_ReadyUpload.Select("检验流水号 = '" + check_jylsh + "' and 检验次数 = '" + check_jycs + "'");
-                                    if (ReadyToDelete.Count() > 0)//软件界面有这个检验流水号及检验次数的记录就删除
-                                    {
-                                        for (int j = 0; j < ReadyToDelete.Count(); j++)
-                                        {
-                                            dt_ReadyUpload.Rows.Remove(ReadyToDelete[j]);
-                                        }
-                                        strDeleteResult += "数据上传软件界面记录删除成功";
-                                    }
-                                    strDeleteResult += "数据上传软件界面无记录";
-                                    tSSL_Status.Text = strDeleteResult;
-                                    FileOpreate.SaveLog(strDeleteResult, "待检车辆信息删除", 1);
-                                }
-                                catch (Exception ex)
-                                {
-                                    FileOpreate.SaveLog("删除NET上不存在待检车辆信息错误" + ex.Message, "待检列表同步错误", 4);
-                                }
-                            }
-                        }
-                        //同步待检列表
-                        try
-                        {
-                            for (int i = 0; i < dtWaitCarListInNet.Rows.Count; i++)
-                            {
-                                string jcff = "";
-                                string jylsh = dtWaitCarListInNet.Rows[i]["jylsh"].ToString();
-                                string jycs = dtWaitCarListInNet.Rows[i]["testtimes"].ToString();
-                                string hphm = dtWaitCarListInNet.Rows[i]["license"].ToString();
-                                DataRow[] dr_CheckWaitList = dtWaitCarList.Select("JYLSH = '" + jylsh + "' and JCCS = '" + jycs + "'");//查询待检列表中是否存在该车
-                                DataRow[] dr_CheckAlreadUpload = dt_AlreadyUpload.Select("检验流水号 = '" + jylsh + "' and 检验次数 = '" + jycs + "'");//上传已成功表是否存在该车
-
-                                //待检车辆表及上传成功表中均没有该车信息时，先更新该车信息、再更新待检列表信息
-                                /*
-                                有选择项的传代码、检测软件内部判断
-                                */
-                                if (dr_CheckWaitList.Count() == 0 && dr_CheckAlreadUpload.Count() == 0)
-                                {
-                                    //1、获取车辆信
-                                    string error_info2 = "";
-                                    DataTable dt_CarInfoInNet = InterfaceUpload.GetCarInfoByLshLN(jylsh, jycs, out error_info2);
-                                    if (dt_CarInfoInNet != null && dt_CarInfoInNet.Rows.Count > 0)
-                                    {
-                                        switch (dtWaitCarListInNet.Rows[i]["testtype"].ToString())
-                                        {
-                                            case "1":
-                                                if (FileOpreate.jcff.sds)
-                                                {
-                                                    if (dt_CarInfoInNet.Rows[0]["vehicletype"].ToString().StartsWith("M"))
-                                                        jcff = "SDSM";
-                                                    else
-                                                        jcff = "SDS";
-                                                    break;
-                                                }
-                                                else
-                                                    continue;
-                                            case "2":
-                                                if (FileOpreate.jcff.asm)
-                                                {
-                                                    jcff = "ASM";
-                                                    break;
-                                                }
-                                                else
-                                                    continue;
-                                            case "3":
-                                                if (FileOpreate.jcff.vmas)
-                                                {
-                                                    jcff = "VMAS";
-                                                    break;
-                                                }
-                                                else
-                                                    continue;
-                                            case "4":
-                                                if (FileOpreate.jcff.jzjs)
-                                                {
-                                                    jcff = "JZJS";
-                                                    break;
-                                                }
-                                                else
-                                                    continue;
-                                            case "5":
-                                                if (FileOpreate.jcff.zyjs)
-                                                {
-                                                    jcff = "ZYJS";
-                                                    break;
-                                                }
-                                                else
-                                                    continue;
-                                            default:
-                                                FileOpreate.SaveLog("该检测线不支持" + dtWaitCarListInNet.Rows[i]["license"].ToString() + "要求使用的检测方法：" + dtWaitCarListInNet.Rows[i]["jcff"].ToString(), "InterfaceError4", 1);
-                                                continue;
-                                        }
-                                        //2、更新车辆信息
-                                        CARINF new_car = new CARINF();
-                                        new_car.CLHP = dt_CarInfoInNet.Rows[0]["license"].ToString();
-                                        new_car.CPYS = dt_CarInfoInNet.Rows[0]["licensetype"].ToString();
-                                        new_car.HPZL = dt_CarInfoInNet.Rows[0]["licensecode"].ToString();
-                                        new_car.CLLX = dt_CarInfoInNet.Rows[0]["vehicletype"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("vehiclemodel"))
-                                            new_car.XH = dt_CarInfoInNet.Rows[0]["vehiclemodel"].ToString();
-                                        else
-                                            new_car.XH = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("cpmc"))
-                                            new_car.PP = dt_CarInfoInNet.Rows[0]["cpmc"].ToString();
-                                        else
-                                            new_car.PP = "";
-                                        new_car.CLSBM = dt_CarInfoInNet.Rows[0]["vin"].ToString();
-                                        if (dt_CarInfoInNet.Columns.Contains("clscqy"))
-                                            new_car.SCQY = dt_CarInfoInNet.Rows[0]["clscqy"].ToString();
-                                        else
-                                            new_car.SCQY = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("engine"))
-                                            new_car.FDJXH = dt_CarInfoInNet.Rows[0]["engine"].ToString();
-                                        else
-                                            new_car.FDJXH = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("enginemanuf"))
-                                            new_car.FDJSCQY = dt_CarInfoInNet.Rows[0]["enginemanuf"].ToString();
-                                        else
-                                            new_car.FDJSCQY = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjh"))
-                                            new_car.FDJHM = dt_CarInfoInNet.Rows[0]["fdjh"].ToString();
-                                        else
-                                            new_car.FDJHM = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("ed"))
-                                            new_car.FDJPL = dt_CarInfoInNet.Rows[0]["ed"].ToString();
-                                        else
-                                            new_car.FDJPL = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("enginespeed"))
-                                            new_car.EDZS = dt_CarInfoInNet.Rows[0]["enginespeed"].ToString();
-                                        else
-                                            new_car.EDZS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("enginepower"))
-                                            new_car.EDGL = dt_CarInfoInNet.Rows[0]["enginepower"].ToString();
-                                        else
-                                            new_car.EDGL = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("usetype"))
-                                            new_car.SYXZ = dt_CarInfoInNet.Rows[0]["usetype"].ToString();
-                                        else
-                                            new_car.SYXZ = "";
-                                        new_car.ZCRQ = DateTime.Parse(dt_CarInfoInNet.Rows[0]["registerdate"].ToString());
-                                        new_car.SCRQ = DateTime.Parse(dt_CarInfoInNet.Rows[0]["mdate"].ToString());
-                                        if (dt_CarInfoInNet.Columns.Contains("owner"))
-                                            new_car.CZ = dt_CarInfoInNet.Rows[0]["owner"].ToString();
-                                        else
-                                            new_car.CZ = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("lxdh"))
-                                            new_car.LXDH = dt_CarInfoInNet.Rows[0]["lxdh"].ToString();
-                                        else
-                                            new_car.LXDH = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("lxdz"))
-                                            new_car.CZDZ = dt_CarInfoInNet.Rows[0]["lxdz"].ToString();
-                                        else
-                                            new_car.CZDZ = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("standard"))
-                                            new_car.ZXBZ = dt_CarInfoInNet.Rows[0]["standard"].ToString();
-                                        else
-                                            new_car.ZXBZ = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("gear"))
-                                            new_car.BSQXS = dt_CarInfoInNet.Rows[0]["gear"].ToString();
-                                        else
-                                            new_car.BSQXS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("airin"))
-                                            new_car.JQFS = dt_CarInfoInNet.Rows[0]["airin"].ToString();
-                                        else
-                                            new_car.JQFS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("fueltype"))
-                                            new_car.RLZL = dt_CarInfoInNet.Rows[0]["fueltype"].ToString();
-                                        else
-                                            new_car.RLZL = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("fuelsupply"))
-                                            new_car.GYFS = dt_CarInfoInNet.Rows[0]["fuelsupply"].ToString();
-                                        else
-                                            new_car.GYFS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("drivemode"))
-                                            new_car.QDXS = dt_CarInfoInNet.Rows[0]["drivemode"].ToString();
-                                        else
-                                            new_car.QDXS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("gvm"))
-                                            new_car.ZZL = dt_CarInfoInNet.Rows[0]["gvm"].ToString();
-                                        else
-                                            new_car.ZZL = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("rm"))
-                                            new_car.JZZL = dt_CarInfoInNet.Rows[0]["rm"].ToString();
-                                        else
-                                            new_car.JZZL = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("zbzl"))
-                                            new_car.ZBZL = dt_CarInfoInNet.Rows[0]["zbzl"].ToString();
-                                        else
-                                            new_car.ZBZL = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("cylinders"))
-                                            new_car.QGS = dt_CarInfoInNet.Rows[0]["cylinders"].ToString();
-                                        else
-                                            new_car.QGS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("obd"))
-                                            new_car.OBD = dt_CarInfoInNet.Rows[0]["obd"].ToString();
-                                        else
-                                            new_car.OBD = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjccs"))
-                                            new_car.CCS = dt_CarInfoInNet.Rows[0]["fdjccs"].ToString();
-                                        else
-                                            new_car.CCS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("gbwdzz"))
-                                            new_car.CHZZ = dt_CarInfoInNet.Rows[0]["gbwdzz"].ToString();
-                                        else
-                                            new_car.CHZZ = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("qdltqy"))
-                                            new_car.QDLTQY = dt_CarInfoInNet.Rows[0]["qdltqy"].ToString();
-                                        else
-                                            new_car.QDLTQY = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("chzhq"))
-                                            new_car.JHZZ = dt_CarInfoInNet.Rows[0]["chzhq"].ToString();
-                                        else
-                                            new_car.JHZZ = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("rygg"))
-                                            new_car.RYPH = dt_CarInfoInNet.Rows[0]["rygg"].ToString();
-                                        else
-                                            new_car.RYPH = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("sjcys"))
-                                            new_car.HDZK = dt_CarInfoInNet.Rows[0]["sjcys"].ToString();
-                                        else
-                                            new_car.HDZK = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("ssxq"))
-                                            new_car.SSXQ = dt_CarInfoInNet.Rows[0]["ssxq"].ToString();
-                                        else
-                                            new_car.SSXQ = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("dws"))
-                                            new_car.DWS = dt_CarInfoInNet.Rows[0]["dws"].ToString();
-                                        else
-                                            new_car.DWS = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("jclx"))
-                                            new_car.JCLB = dt_CarInfoInNet.Rows[0]["jclx"].ToString();
-                                        else
-                                            new_car.JCLB = "";
-                                        if (dt_CarInfoInNet.Columns.Contains("fdjzdjgl"))
-                                            new_car.ZDJGL = dt_CarInfoInNet.Rows[0]["fdjzdjgl"].ToString();
-                                        else
-                                            new_car.ZDJGL = "";
-
-                                        if (carinfodb.UpdateOrInsertCarInf(new_car))
-                                        {
-                                            FileOpreate.SaveLog(hphm + "车辆信息更新成功", "车辆信息更新", 1);
-                                            //3、更新待检列表信息
-                                            if (carinfodb.addCarToWaitList(hphm + "T" + DateTime.Now.ToString("yyyyMMddHHmmss"), jylsh, jycs, dtWaitCarListInNet.Rows[i]["license"].ToString(), dt_CarInfoInNet.Rows[0]["licensetype"].ToString(), dtWaitCarListInNet.Rows[i]["licensecode"].ToString(), dt_CarInfoInNet.Rows[0]["odometer"].ToString(), jcff, dtWaitCarListInNet.Rows[i]["tsno"].ToString(), dtWaitCarListInNet.Rows[i]["dlsj"].ToString(), dt_CarInfoInNet.Rows[0]["jclry"].ToString()))
-                                                FileOpreate.SaveLog(hphm + "|" + jylsh + "|" + jycs + "|" + jcff + "方法待检车辆信息更新成功", "DBWrite2", 1);
-                                            else
-                                                FileOpreate.SaveLog(hphm + "|" + jylsh + "|" + jycs + "|" + jcff + "方法待检车辆信息更新失败", "DBError1", 1);
-                                        }
-                                        else
-                                        {
-                                            tSSL_Status.Text = hphm + "车辆信息更新失败！";
-                                            FileOpreate.SaveLog(hphm + "|" + jylsh + "|" + jycs + "车辆信息更新失败", "车辆信息更新", 1);
-                                        }
-                                    }
-                                    else
-                                        FileOpreate.SaveLog(hphm + "|" + jylsh + "|" + jycs + "查询车辆信息失败，原因：" + error_info2, "联网查询车辆信息失败", 1);
+                                        FileOpreate.SaveLog(hphm + "更新车辆信息表失败，无法加入待检列表", "DBError2", 1);
                                 }
                             }
                         }
@@ -1308,8 +978,9 @@ namespace DataUpdate
                 FileOpreate.SaveLog(er.Message, "systemError1", 1);
             }
             #endregion
-        }
 
+        }
+        int timerUploadTestDataCount = 0, timerUploadBdzjCount = 0,timerGetWaitListCount=0;
         //数据上传定时器
         private void timerUploadTestData_Tick(object sender, EventArgs e)
         {
@@ -1318,6 +989,12 @@ namespace DataUpdate
             
             try
             {
+                timerUploadTestDataCount++;//
+                if (timerUploadTestDataCount > 10)
+                    timerUploadTestDataCount = 0;
+                toolStripProgressBar1.Value = timerUploadTestDataCount;
+                //= 0, timerUploadBdzjCount = 0,timerGetWaitListCount = 0;
+                //tsl_inf.Text = "上次刷新：" + DateTime.Now.ToString();
                 DataTable CarTestStatusTable = carinfodb.getCarTestStatus();//获取车辆检测状态表
                 #region 显示 
                 dt_ReadyUpload.Clear();
@@ -1351,7 +1028,7 @@ namespace DataUpdate
                         dt_jczt.ImportRow(CarTestStatusTable.Rows[i]);
 
                         //处理提取数据
-                        dt_jczt.Rows[0]["HPZL"] = InterfaceUpload.get_hpzl_code[dt_jczt.Rows[0]["HPZL"].ToString()];
+                        //dt_jczt.Rows[0]["HPZL"] = InterfaceUpload.get_hpzl_code[dt_jczt.Rows[0]["HPZL"].ToString()];
                         string tempZT = dt_jczt.Rows[0]["ZT"].ToString();
                         string tempYCLZT = dt_jczt.Rows[0]["YCLZT"].ToString();
                         string jylsh = dt_jczt.Rows[0]["JYLSH"].ToString();
@@ -1371,8 +1048,8 @@ namespace DataUpdate
                                             continue;
                                         AsmUploadThread = new Thread(new ParameterizedThreadStart(UploadASMData));//新建一个过程的上传线程
                                         AsmUploadThread.Start(dt_jczt);//开始上传线程
-                                        carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);//临时更新已处理状态到当前状态
-                                        ShowStatus(jylsh, jycs, "备注", "ASM数据自动上传中...");
+                                       // carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);//临时更新已处理状态到当前状态
+                                        //ShowStatus(jylsh, jycs, "备注", "ASM数据自动上传中...");
                                         FileOpreate.SaveLog("jylsh:" + jylsh + "|ASM数据自动上传线程已开始", "检测数据上传", 1);
                                     }
                                     break;
@@ -1383,8 +1060,8 @@ namespace DataUpdate
                                             continue;
                                         VmasUploadThread = new Thread(new ParameterizedThreadStart(UploadVMASData));
                                         VmasUploadThread.Start(dt_jczt);
-                                        carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
-                                        ShowStatus(jylsh, jycs, "备注", "VMAS数据自动上传中...");
+                                        //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                        //ShowStatus(jylsh, jycs, "备注", "VMAS数据自动上传中...");
                                         FileOpreate.SaveLog("VMAS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
                                     break;
@@ -1395,8 +1072,8 @@ namespace DataUpdate
                                             continue;
                                         SdsUploadThread = new Thread(new ParameterizedThreadStart(UploadSDSData));
                                         SdsUploadThread.Start(dt_jczt);
-                                        carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
-                                        ShowStatus(jylsh, jycs, "备注", "SDS数据自动上传中...");
+                                        //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                       // ShowStatus(jylsh, jycs, "备注", "SDS数据自动上传中...");
                                         FileOpreate.SaveLog("jylsh:"+ jylsh+"|SDS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
                                     break;
@@ -1407,8 +1084,8 @@ namespace DataUpdate
                                             continue;
                                         SdsMUploadThread = new Thread(new ParameterizedThreadStart(UploadSDSMData));
                                         SdsMUploadThread.Start(dt_jczt);
-                                        carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
-                                        ShowStatus(jylsh, jycs, "备注", "SDSM数据自动上传中...");
+                                        ////carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                       // ShowStatus(jylsh, jycs, "备注", "SDSM数据自动上传中...");
                                         FileOpreate.SaveLog("SDSM数据自动上传线程已开始", "检测数据上传", 1);
                                     }
                                     break;
@@ -1419,7 +1096,7 @@ namespace DataUpdate
                                             continue;
                                         JzjsUploadThread = new Thread(new ParameterizedThreadStart(UploadJZJSData));
                                         JzjsUploadThread.Start(dt_jczt);
-                                        carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                        //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                         ShowStatus(jylsh, jycs, "备注", "JZJS数据自动上传中...");
                                         FileOpreate.SaveLog("JZJS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
@@ -1431,8 +1108,8 @@ namespace DataUpdate
                                             continue;
                                         ZyjsUploadThread = new Thread(new ParameterizedThreadStart(UploadZYJSData));
                                         ZyjsUploadThread.Start(dt_jczt);
-                                        carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
-                                        ShowStatus(jylsh, jycs, "备注", "ZYJS数据自动上传中...");
+                                       // carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                       // ShowStatus(jylsh, jycs, "备注", "ZYJS数据自动上传中...");
                                         FileOpreate.SaveLog("ZYJS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
                                     break;
@@ -1773,7 +1450,7 @@ namespace DataUpdate
                         {
                             if (carinfodb.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
                             {
-                                yclzt = "2";
+                                carinfodb.UpdateCarTestStatusYCLZT("2", jylsh, jycs);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "项目开始发送成功", "SDS上传过程", 1);
                             }
                             else
@@ -1787,7 +1464,7 @@ namespace DataUpdate
                             return;
                         }
                     }
-                    if ((zt == "11" || zt == "12" || zt == "6") && yclzt == "2")
+                    if ((zt == "11" || zt == "14"||zt == "12" || zt == "13" || zt == "6") && yclzt == "2")
                     {
                         //发11照片
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "11"))
@@ -1800,20 +1477,46 @@ namespace DataUpdate
                             FileOpreate.SaveLog("流水号：" + jylsh + "11发送失败", "SDS上传过程", 1);
                         //更新YCLZT到11
                     }
-                    if ((zt == "12" || zt == "6") && yclzt == "11")
+                    if ((zt == "14" || zt == "12" || zt == "13" || zt == "6") && yclzt == "11")
                     {
-                        //发12
-                        if (UpdateCapturePicture(dt_test_status.Rows[0], "12"))
+                        //发11照片
+                        if (UpdateCapturePicture(dt_test_status.Rows[0], "14"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("12", jylsh, jycs);
-                            //yclzt = "12";
-                            FileOpreate.SaveLog("流水号：" + jylsh + "12发送成功", "SDS上传过程", 1);
+                            //yclzt = "11";
+                            carinfodb.UpdateCarTestStatusYCLZT("14", jylsh, jycs);
+                            FileOpreate.SaveLog("流水号：" + jylsh + "11发送成功", "SDS上传过程", 1);
                         }
                         else
-                            FileOpreate.SaveLog("流水号：" + jylsh + "12发送失败", "SDS上传过程", 1);
-                        //更新YCLZT到12
+                            FileOpreate.SaveLog("流水号：" + jylsh + "11发送失败", "SDS上传过程", 1);
+                        //更新YCLZT到11
                     }
-                    if (zt == "6" && yclzt == "12")
+                    if ((zt == "12" || zt == "13" || zt == "6") && yclzt == "14")
+                    {
+                        //发11照片
+                        if (UpdateCapturePicture(dt_test_status.Rows[0], "12"))
+                        {
+                            //yclzt = "11";
+                            carinfodb.UpdateCarTestStatusYCLZT("12", jylsh, jycs);
+                            FileOpreate.SaveLog("流水号：" + jylsh + "11发送成功", "SDS上传过程", 1);
+                        }
+                        else
+                            FileOpreate.SaveLog("流水号：" + jylsh + "11发送失败", "SDS上传过程", 1);
+                        //更新YCLZT到11
+                    }
+                    if (( zt == "13" || zt == "6") && yclzt == "12")
+                    {
+                        //发11照片
+                        if (UpdateCapturePicture(dt_test_status.Rows[0], "13"))
+                        {
+                            //yclzt = "11";
+                            carinfodb.UpdateCarTestStatusYCLZT("13", jylsh, jycs);
+                            FileOpreate.SaveLog("流水号：" + jylsh + "11发送成功", "SDS上传过程", 1);
+                        }
+                        else
+                            FileOpreate.SaveLog("流水号：" + jylsh + "11发送失败", "SDS上传过程", 1);
+                        //更新YCLZT到11
+                    }
+                    if (zt == "6" && yclzt == "13")
                     {
                         string test_result = "";
                         if (UpdateResult("SDS", jylsh, jycs, out test_result))
@@ -2272,8 +1975,47 @@ namespace DataUpdate
         //项目开始发送
         private bool UpdateProjectStart(DataRow TestStatus, out string error_info)
         {
-            error_info = "";
-            return true;
+            try
+            {
+                error_info = "";
+                string jycs = TestStatus["JYCS"].ToString();
+                string jylsh = TestStatus["JYLSH"].ToString();
+                DataTable dt = carinfodb.getOutLookCheck(jylsh);
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    error_info = "未找到该车外检记录，请先进行外检";
+                    //return false;
+                    return true;
+                }
+                else
+                {
+                    string checkResult = dt.Rows[0]["CheckResult"].ToString();
+                    if (checkResult != "Y")
+                    {
+                        error_info = "该车外检记录不合格，请检查后重新进行外检";
+                        return false;
+                    }
+                    string id = dt.Rows[0]["ID"].ToString();
+                    Hashtable ht = new Hashtable();
+                    ht.Add("IsOutlookChecked", "Y");
+                    ht.Add("OutLookCheckID", id);
+                    if (conforsql.Update("待检列表", "where JYLSH='" + jylsh + "' and JCCS='" + jycs + "'", ht) > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        error_info = "更新待检车辆外检信息失败";
+                        return false;
+                    }
+                }
+            }
+            catch(Exception ER)
+            {
+                FileOpreate.SaveLog("更新待检车辆信息异常:" + ER.Message, "请求开始", 1);
+                error_info = "更新待检车辆信息异常";
+                return false;
+            }
         }
         
         //项目结束发送
@@ -2301,8 +2043,8 @@ namespace DataUpdate
                 DataRow obj_process = null;
                 DataRow obj_car = null;
                 carinfodb.getTestResult(jcff=="ZYJS"?"Zyjs_Btg":jcff, jylsh, jycs, out obj_result);
-                carinfodb.getTestResult(jcff+"_DATASECONDS", jylsh, jycs, out obj_process);
-                carinfodb.getTestResult("已检车辆信息", jylsh, jycs, out obj_car);
+                carinfodb.getProcessData(jcff+"_DATASECONDS", jylsh, jycs, out obj_process);
+                carinfodb.getVehicleData("已检车辆信息", jylsh, jycs, out obj_car);
                 if (obj_result==null)
                 {
                     test_result = "没有找到结果数据";
@@ -2406,20 +2148,21 @@ namespace DataUpdate
                     if (interfaceUploadJh.uploadInspStmDeviceRecord(temp_dt_bddata.Rows[0]))
                     {
                         FileOpreate.SaveLog("【设备标定数据】|ID=" + id + "|LX=" + lx + "|数据上传成功", "标定数据发送", 1);
-                        Update_ZjBd_Log(lineid, int.Parse(temp_dt_bddata.Rows[0]["LX"].ToString()), "已上传");
-                        carinfodb.UpdateBDZT("1", lx, 0);
+                        
+                        //Update_ZjBd_Log(lineid, int.Parse(temp_dt_bddata.Rows[0]["LX"].ToString()), "已上传");
+                        carinfodb.UpdateBDZT("1", id,++uploadTimes);
                     }
                     else
                     {
                         FileOpreate.SaveLog("！！！！【设备标定数据】|ID=" + id + "|LX=" + lx + "|数据上传失败！！！！", "标定数据发送", 1);
                         //上传不成功则将状态改回0
-                        carinfodb.UpdateBDZT("0", lx, ++uploadTimes);
+                        carinfodb.UpdateBDZT("0", id, ++uploadTimes);
                     }
                 }
                 catch (Exception er)
                 {
                     FileOpreate.SaveLog("！！！！【设备标定数据】|ID=" + id + "|LX=" + lx + "|数据上传发生异常：" + er.Message + "！！！！", "标定数据发送", 1);
-                    carinfodb.UpdateBDZT("0", lx, ++uploadTimes);
+                    carinfodb.UpdateBDZT("0", id, ++uploadTimes);
                 }
             }
             catch (Exception er)
@@ -2446,20 +2189,20 @@ namespace DataUpdate
                     if (interfaceUploadJh.uploadInspStmDeviceRecord(temp_dt_bddata.Rows[0]))
                     {
                         FileOpreate.SaveLog("【设备自检数据】|ID=" + id + "|LX=" + lx + "|数据上传成功", "标定数据发送", 1);
-                        Update_ZjBd_Log(lineid, int.Parse(temp_dt_bddata.Rows[0]["LX"].ToString()), "已上传");
-                        carinfodb.UpdateSelfCheckZT("1", lx, 0);
+                       // Update_ZjBd_Log(lineid, int.Parse(temp_dt_bddata.Rows[0]["LX"].ToString()), "已上传");
+                        carinfodb.UpdateSelfCheckZT("1", id, ++uploadTimes);
                     }
                     else
                     {
                         FileOpreate.SaveLog("！！！！【设备自检数据】|ID=" + id + "|LX=" + lx + "|数据上传失败！！！！", "标定数据发送", 1);
                         //上传不成功则将状态改回0
-                        carinfodb.UpdateSelfCheckZT("0", lx, ++uploadTimes);
+                        carinfodb.UpdateSelfCheckZT("0", id, ++uploadTimes);
                     }
                 }
                 catch (Exception er)
                 {
                     FileOpreate.SaveLog("！！！！【设备自检数据】|ID=" + id + "|LX=" + lx + "|数据上传发生异常：" + er.Message + "！！！！", "标定数据发送", 1);
-                    carinfodb.UpdateSelfCheckZT("0", lx, ++uploadTimes);
+                    carinfodb.UpdateSelfCheckZT("0", id, ++uploadTimes);
                 }
             }
             catch (Exception er)
@@ -2471,73 +2214,14 @@ namespace DataUpdate
         
         private void 标定自检上传记录ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DataTable show_temp = dt_ZjBdUpload.Copy();
-            if (FileOpreate.Interface_Area == 0)
-            {
-                //修改自检标定列名称
-                show_temp.Columns[1].ColumnName = "加载滑行";
-                show_temp.Columns[2].ColumnName = "废气仪自检";
-                show_temp.Columns[3].ColumnName = "烟度计自检";
-                show_temp.Columns[4].ColumnName = "电子环境信息仪自检";
-                show_temp.Columns[5].ColumnName = "发动机转速仪自检";
-                show_temp.Columns[6].ColumnName = "流量计自检";
-                show_temp.Columns[7].ColumnName = "寄生功率";
-                show_temp.Columns[8].ColumnName = "车速标定";
-                show_temp.Columns[9].ColumnName = "扭力标定";
-                show_temp.Columns[10].ColumnName = "寄生功率标定";
-                show_temp.Columns[11].ColumnName = "加载滑行标定";
-                show_temp.Columns[12].ColumnName = "废气标定";
-                show_temp.Columns[13].ColumnName = "烟度标定";
-                show_temp.Columns[14].ColumnName = "惯量标定";
-                show_temp.Columns[15].ColumnName = "响应时间标定";
-            }
-            else if (FileOpreate.Interface_Area == 1 || FileOpreate.Interface_Area == 2)
-            {
-                //移除不需要的列
-                show_temp.Columns.RemoveAt(15);
-                show_temp.Columns.RemoveAt(14);
-                //修改自检标定列名称
-                show_temp.Columns[1].ColumnName = "加载滑行检查";
-                show_temp.Columns[2].ColumnName = "附加功率损失检查";
-                show_temp.Columns[3].ColumnName = "分析仪检查";
-                show_temp.Columns[4].ColumnName = "泄露检查";
-                show_temp.Columns[5].ColumnName = "分析仪氧量程检查";
-                show_temp.Columns[6].ColumnName = "低标气检查";
-                show_temp.Columns[7].ColumnName = "流量计检查";
-                show_temp.Columns[8].ColumnName = "车速校准";
-                show_temp.Columns[9].ColumnName = "扭力校准";
-                show_temp.Columns[10].ColumnName = "寄生功率校准";
-                show_temp.Columns[11].ColumnName = "加载滑行校准";
-                show_temp.Columns[12].ColumnName = "废气仪校准";
-                show_temp.Columns[13].ColumnName = "烟度计校准";
-            }
-            else
-            {
-                //移除不需要的列
-                show_temp.Columns.RemoveAt(15);
-                //修改自检标定列名称
-                show_temp.Columns[1].ColumnName = "加载滑行检查";
-                show_temp.Columns[2].ColumnName = "附加功率损失检查";
-                show_temp.Columns[3].ColumnName = "分析仪检查";
-                show_temp.Columns[4].ColumnName = "泄露检查";
-                show_temp.Columns[5].ColumnName = "分析仪氧量程检查";
-                show_temp.Columns[6].ColumnName = "低标气检查";
-                show_temp.Columns[7].ColumnName = "流量计检查";
-                show_temp.Columns[8].ColumnName = "电子环境信息检查";
-                show_temp.Columns[9].ColumnName = "车速校准";
-                show_temp.Columns[10].ColumnName = "扭力校准";
-                show_temp.Columns[11].ColumnName = "寄生功率校准";
-                show_temp.Columns[12].ColumnName = "加载滑行校准";
-                show_temp.Columns[13].ColumnName = "废气仪校准";
-                show_temp.Columns[14].ColumnName = "烟度计校准";
-            }
+           
+            dataGridView_UploadFailed.Visible = false;
             dataGridView_Ready_And_Failed.Visible = false;
             dataGridView_AlreadyUpload.Visible = false;
             dataGridView_BDZJ.Visible = true;
             dataGridView_BDZJ.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 
             //显示标定自检上传记录表
-            dataGridView_BDZJ.DataSource = show_temp;
 
             tSSL_Status.Text = "状态：当前显示标定自检数据上传记录！";
         }
@@ -2567,6 +2251,8 @@ namespace DataUpdate
             JcZt.Add("6", "检测完成");
             JcZt.Add("11", "SDS高怠速中");
             JcZt.Add("12", "SDS低怠速中");
+            JcZt.Add("14", "SDS高怠速结束");
+            JcZt.Add("13", "SDS低怠速结束");
             JcZt.Add("21", "5025开始");
             JcZt.Add("22", "ASM5025结束");
             JcZt.Add("23", "ASM2540开始");
@@ -2580,6 +2266,35 @@ namespace DataUpdate
             JcZt.Add("51", "ZYJS第一次");
             JcZt.Add("52", "ZYJS第二次");
             JcZt.Add("53", "ZYJS第三次");
+
+            Dic_BDZJ.Add("1", "测功机自检");
+            Dic_BDZJ.Add("2", "附加功率损失");
+            Dic_BDZJ.Add("3", "五气分析仪自检");
+            Dic_BDZJ.Add("4", "泄漏检查");
+            Dic_BDZJ.Add("5", "分析仪氧量程检查");
+            Dic_BDZJ.Add("6", "低标气检查");
+            Dic_BDZJ.Add("7", "流量计检查");
+            Dic_BDZJ.Add("8", "转速计");
+            Dic_BDZJ.Add("9", "电子环境检查");
+            Dic_BDZJ.Add("10", "NOx分析仪");
+            Dic_BDZJ.Add("11", "烟度计检查");
+            Dic_BDZJ.Add("12", "加载滑行检查");
+            Dic_BDZJ.Add("13", "五气分析仪五点检查");
+            Dic_BDZJ.Add("14", "NOx分析仪五点检查");
+            Dic_BDZJ.Add("15", "预热");
+            Dic_BDZJ.Add("20", "加载滑行标定");
+            Dic_BDZJ.Add("21", "寄生功率校准");
+            Dic_BDZJ.Add("22", "车速校准");
+            Dic_BDZJ.Add("23", "扭力校准");
+            Dic_BDZJ.Add("24", "废气仪标准");
+            Dic_BDZJ.Add("25", "烟度计校准");
+            Dic_BDZJ.Add("26", "NOx分析仪校准");
+            Dic_BDZJ.Add("27", "气象站校准");
+            Dic_BDZJ.Add("28", "惯量");
+            Dic_BDZJ.Add("29", "变载荷");
+            Dic_BDZJ.Add("30", "响应时间");
+            Dic_BDZJ.Add("31", "流量计标定");
+            Dic_BDZJ.Add("40", "同时时间");
         }
 
         private void Update_ZjBd_Log(string line_id, int xm_index, string result)
@@ -2592,9 +2307,11 @@ namespace DataUpdate
 
         private void 上传失败记录ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            
             dataGridView_UploadFailed.Visible = true;
             dataGridView_Ready_And_Failed.Visible = false;
+            dataGridView_AlreadyUpload.Visible = false;
+            dataGridView_BDZJ.Visible = false;
             tSSL_Status.Text = "状态：当前显示上传失败数据列表！";
         }
         /// <summary>
@@ -2626,7 +2343,7 @@ namespace DataUpdate
                         dr["检测方法"] = CarTestStatusTable.Rows[i]["JCFF"].ToString();
                         dr["当前状态"] = JcZt[CarTestStatusTable.Rows[i]["ZT"].ToString()];
                         dr["已处理状态"] = CarTestStatusTable.Rows[i]["YCLZT"].ToString() == "6" ? "上传过程/结果数据" : JcZt[CarTestStatusTable.Rows[i]["YCLZT"].ToString()];
-                        dr["备注"] = CarTestStatusTable.Rows[i]["BZ"].ToString();
+                        dr["上传失败原因"] = CarTestStatusTable.Rows[i]["BZ"].ToString();
                         dt_UploadFailed.Rows.Add(dr);
                     }
                 }
@@ -2636,6 +2353,18 @@ namespace DataUpdate
             catch (Exception er)
             {
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            timerBdZjUpdate.Enabled = checkBox1.Checked;
+            timerRefreshFaileData.Enabled = checkBox1.Checked;
+            timerUploadTestData.Enabled = checkBox1.Checked;
+        }
+
+        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
@@ -2664,8 +2393,10 @@ namespace DataUpdate
             catch (Exception e)
             {
                 FileOpreate.SaveLog("SetSystemDateTime函数执行异常" + e.Message,"SetSystemTimeError", 1);
+                MessageBox.Show("设置系统时间失败:" + e.Message);
+                return false;
             }
-            return flag;
+            return true;
         }
     }
     public struct SystemTime

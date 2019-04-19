@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DataUpdate
 {
-    class ModPublicJHHB
+    public class ModPublicJHHB
     {
         # region 联网信息
         public static string webAddress;  //接口地址
@@ -2944,6 +2944,69 @@ namespace DataUpdate
             public List<uploadAckResult> result { set; get; }
         }
         #endregion
+        public class uploadReg
+        {
+            public string jkid { set; get; }
+            public string jksqm { set; get; }
+            public List<uploadRegResult> result { set; get; }
+        }
+        public class uploadRegResult
+        {
+            public List<uploadRegBody> body;
+        }
+        public class uploadRegBody
+        {
+            public uploadRegInsp insp;
+            public uploadRegInsp_Vehicle insp_vehicle;
+        }
+        public class uploadRegInsp
+        {
+            public string inspregid { set; get; }        //车辆检测登录id    如果epdesc值为ALLOW或为空，则返回inspregid信息。该字段是环保局检测登录id唯一编号。与该车辆检测相关数据必须包含该字段内容
+            public string TsNo { set; get; }        // 检测站编号 由市环保局提供，检测站唯一编号。该检测站上报的所有数据都必须包含该字段内容
+            public string epdesc { set; get; }        // 车辆是否可以在本检测站进行检测 如果值为ALLOW或为空则表示可以正常登陆检测。如果不为空，则表示该车辆被中心系统锁定，站内登录系统需把该<环保说明epdesc> 信息反馈给登录人员。（参看epdesc节点说明）。
+            public string TestType { set; get; }        //常规检测方法  最终检测方法要检测人员根据车辆实际情况进行确定
+            public string TestTypeDesc { set; get; }        //检测方法补充说明 对建议检测方法进行补充说明。
+            public string TestLineNo { set; get; }        //检测线代码   yyyyMMddHHmmss
+            public string inspfueltype { set; get; }        //  应检燃料类型 详见数据字典8.1序6
+            public string RegisterTime { set; get; }        //  车辆登记时间
+            public string Inspperiod { set; get; }        // 年检周期
+            public string TestTimes { set; get; }        // 检验次数
 
+        }
+        public class uploadRegInsp_Vehicle
+        {
+            public string License { set; get; }        //号牌号码
+            public string LicenseCode { set; get; }        //号牌种类(GA)    详见数据字典8.1序1
+            public string LicenseType { set; get; }        // 号牌颜色 详见数据字典8.2序11
+            public string VIN { set; get; }        //VIN 车辆识别代号
+            public string vehicleid { set; get; }        //车辆id 系统内部使用
+            public string Engine { set; get; }        //发动机型号
+            public string EngineNo { set; get; }        //发动机编号
+            public string VehicleModel { set; get; }        //车辆型号
+            public string FuelType { set; get; }        //燃料种类(GA)    详见数据字典8.1序6
+            public string Cylinders { set; get; }        //汽缸数
+            public string Odometer { set; get; }        //里程表读数 KM
+            public string Standard { set; get; }        //排放标准    参考8.2 序15
+            public string RM { set; get; }        //基准质量 KG
+            public string GVM { set; get; }        //最大总质量   KG
+            public string ED { set; get; }        // 发动机排量 L
+            public string EngineSpeed { set; get; }        //发动机额定转速
+            public string EnginePower { set; get; }        // 发动额定机功率 Kw
+            public string Passcap { set; get; }        //座位数
+            public string Manuf { set; get; }        //车辆生产企业
+            public string MDate { set; get; }        //车辆出厂日期 yyyyMMddHHmmss
+            public string FuelWay { set; get; }        // 供油方式    详见数据字典8.2 序20
+            public string DriveMode { set; get; }        // 驱动方式 详见数据字典8.2 序7
+            public string Brand { set; get; }        // 品牌/型号
+            public string Gear { set; get; }        // 变速器型式 详见数据字典8.2 序8
+            public string AirIn { set; get; }        //进气方式 详见数据字典8.2 序6
+            public string isOBD { set; get; }        //是否有OBD
+            public string VehicleDesc { set; get; }        //特殊车况说明
+            public string VehicleType { set; get; }        //车辆类型 详见数据字典8.1 序5
+            public string Owner { set; get; }        //联系人
+            public string OwnerAddr { set; get; }        //联系人地址
+            public string OwnerTel { set; get; }        //联系人方式
+
+        }
     }
 }

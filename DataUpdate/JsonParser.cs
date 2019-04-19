@@ -18,7 +18,7 @@ using System.Runtime.InteropServices; //读取ini配置文件所需要的命名�
 using System.Text.RegularExpressions; //正则
 using System.Drawing.Imaging;   //缩放图像
 using System.Drawing.Drawing2D; //缩放图像
-using MSWord = Microsoft.Office.Interop.Word;
+//using MSWord = Microsoft.Office.Interop.Word;
 
 
 using System.Web;

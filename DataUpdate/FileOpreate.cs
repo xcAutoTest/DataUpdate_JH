@@ -228,21 +228,22 @@ namespace DataUpdate
                 string today_logpath = logpath + "\\" + System.DateTime.Now.ToString("yyyy-MM-dd");
                 if (Directory.Exists(today_logpath) == false)
                     Directory.CreateDirectory(today_logpath);
-                switch (log_kind)
-                {
-                    case 1://运行日志
-                        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_Runninglog.txt";
-                        break;
-                    case 2://数据库日志
-                        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_DBlog.txt";
-                        break;
-                    case 3://联网日志
-                        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_Netlog.txt";
-                        break;
-                    default://
-                        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_Otherlog.txt";
-                        break;
-                }
+                //switch (log_kind)
+                //{
+                //    case 1://运行日志
+                //        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_Runninglog.txt";
+                //        break;
+                //    case 2://数据库日志
+                //        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_DBlog.txt";
+                //        break;
+                //    case 3://联网日志
+                //        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_Netlog.txt";
+                //        break;
+                //    default://
+                //        today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_Otherlog.txt";
+                //        break;
+                //}
+                today_logpath = today_logpath + "\\" + System.DateTime.Now.Hour.ToString() + "_log.txt";
                 FileStream fs = new FileStream(today_logpath, FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(fs);
                 sw.WriteLine(System.DateTime.Now.ToString("yy-MM-dd HH:mm:ss") + "——" + log_name + " ：" + "\r\n" + logs + " \r\n ");

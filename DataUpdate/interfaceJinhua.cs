@@ -26,6 +26,21 @@ namespace DataUpdate
         public static Dictionary<string, string> DicJcffR = new Dictionary<string, string>();
         public static Dictionary<string, string> DicResult = new Dictionary<string, string>();
         public static Dictionary<string, string> DicResultR = new Dictionary<string, string>();
+
+        public static Dictionary<string, string> DicSyxz = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicSyxzR = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicCsys = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicJclx = new Dictionary<string, string>();
+
+        public static Dictionary<string, string> DicJqfs = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicQdfs = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicBsqxs = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicHpys = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicPfbz = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicOBD = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicGyfs = new Dictionary<string, string>();
+        public static Dictionary<string, string> DicJHZZ = new Dictionary<string, string>();
+
         public static Dictionary<string, string> DicDeviceType = new Dictionary<string, string>();
         public interfaceJinhua()
         {
@@ -161,6 +176,90 @@ namespace DataUpdate
             DicDeviceType.Add("流量计", "6");
             DicDeviceType.Add("滤纸烟度计", "7");
             DicDeviceType.Add("工控机", "8");
+
+            DicCsys.Add("A", "白");
+            DicCsys.Add("B", "灰");
+            DicCsys.Add("C", "黄");
+            DicCsys.Add("D", "粉");
+            DicCsys.Add("E", "红");
+            DicCsys.Add("F", "紫");
+            DicCsys.Add("G", "绿");
+            DicCsys.Add("H", "蓝");
+            DicCsys.Add("I", "棕");
+            DicCsys.Add("J", "黑");
+            DicCsys.Add("Z", "其他");
+
+            DicJclx.Add("1", "定期检验");
+            DicJclx.Add("2", "抽检复检");
+            DicJclx.Add("3", "实验比对");
+            DicJclx.Add("4", "外地车委托检验");
+            DicJclx.Add("5", "外地车转入检验");
+            DicJclx.Add("6", "特殊检验");
+            DicJclx.Add("7", "临时检验");
+            DicJclx.Add("8", "新车上牌检验");
+            DicJclx.Add("9", "发动机变更检验");
+            DicJclx.Add("0", "其他");
+
+            DicSyxz.Add("A", "非营运");
+            DicSyxz.Add("B", "公路客运");
+            DicSyxz.Add("C", "公交客运");
+            DicSyxz.Add("D", "出租客运");
+            DicSyxz.Add("E", "旅游客运");
+            DicSyxz.Add("F", "货运");
+            DicSyxz.Add("G", "租赁");
+            DicSyxz.Add("H", "警用");
+            DicSyxz.Add("I", "消防");
+            DicSyxz.Add("J", "救护");
+            DicSyxz.Add("K", "工程抢险");
+            DicSyxz.Add("L", "营转非");
+            DicSyxz.Add("M", "出租转非");
+            DicSyxz.Add("N", "教练");
+            DicSyxz.Add("O", "幼儿校车");
+            DicSyxz.Add("P", "小学生校车");
+            DicSyxz.Add("Q", "初中生校车");
+            DicSyxz.Add("R", "危险品运输");
+            DicSyxz.Add("S", "中小学生校车");
+            DicSyxz.Add("Z", "其他");
+
+            DicJqfs.Add("1", "自然吸气");
+            DicJqfs.Add("2", "涡轮增压");
+
+            DicQdfs.Add("1", "前驱");
+            DicQdfs.Add("2", "后驱");
+            DicQdfs.Add("3", "四驱");
+            DicQdfs.Add("4", "全时四驱");
+
+            DicBsqxs.Add("1", "手动");
+            DicBsqxs.Add("2", "自动");
+
+            DicHpys.Add("1", "蓝牌");
+            DicHpys.Add("2", "黄牌");
+            DicHpys.Add("3", "黑牌");
+            DicHpys.Add("4", "白牌");
+            DicHpys.Add("5", "绿牌");
+            DicHpys.Add("0", "未知");
+
+            DicPfbz.Add("1", "国Ⅰ");
+            DicPfbz.Add("2", "国Ⅱ");
+            DicPfbz.Add("3", "国Ⅲ");
+            DicPfbz.Add("4", "国Ⅳ");
+            DicPfbz.Add("5", "国Ⅴ");
+            DicPfbz.Add("6", "国Ⅵ");
+            DicPfbz.Add("0", "国0");
+
+            DicOBD.Add("1", "有");
+            DicOBD.Add("0", "无");
+
+            DicGyfs.Add("1", "开环电喷");
+            DicGyfs.Add("2", "闭环电喷");
+            DicGyfs.Add("3", "直喷");
+            DicGyfs.Add("4", "高压共轨");
+            DicGyfs.Add("5", "泵喷式");
+            DicGyfs.Add("9", "化油器");
+            DicGyfs.Add("0", "其他");
+
+            DicJHZZ.Add("1", "汽油车有三元催化");
+            DicJHZZ.Add("2", "柴油车有尾气过滤装置");
         }
         
         public bool synSystemTime(out DateTime syntime)
@@ -171,13 +270,13 @@ namespace DataUpdate
             //GET数据 提取时间信息
             if (GetSynctime(ModPublicJHHB.webAddress, modeljson, "GET", out syntime))
             {
-                FileOpreate.SaveLog("[downInspSynctime_Parser]：", "成功", 3);
+                FileOpreate.SaveLog( "成功","[downInspSynctime_Parser]：", 3);
                 //Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[downInspSynctime_Parser]：", "失败", 3);
+                FileOpreate.SaveLog("失败", "[downInspSynctime_Parser]：",  3);
                 Console.WriteLine("POST fail!");
                 return false;
             }
@@ -191,7 +290,7 @@ namespace DataUpdate
             model.deviceCode = "20190201-01-1";
 
             string json = JsonConvert.SerializeObject(model);
-            FileOpreate.SaveLog("[downInspSynctime]：", json, 3);
+            FileOpreate.SaveLog(json,"[downInspSynctime]：",  3);
             return json;
         }
 
@@ -220,26 +319,23 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[downInspSynctime_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog(jsonText,"[downInspSynctime_Ack]：",  3);
+                ModPublicJHHB.uploadAck ack = JsonConvert.DeserializeObject<ModPublicJHHB.uploadAck>(jsonText);
+                if (ack.result[0].code != null && ack.result[0].code != "" && ack.result[0].code != "1" && ack.result[0].code != "2")
+                {
+                    MessageBox.Show("Code:" + ack.result[0].code + "\r\n;Message:" + ack.result[0].message);
+                    return false;
+                }
                 Newtonsoft.Json.Linq.JObject JsonObj;
                 JsonObj = (JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jsonText); //将json字符串转化为json对象 
-                //string Code, Status;
-                ////读取json对象里的字符串对应值
-                //Code = JsonObj["jkid"].ToString();
-                //Status = JsonObj["jksqm"].ToString();
-
-                //正则提取嵌套内容节点 --- 车辆尾气检测结果id（testingid）	
-                //ModPublicJHHB.testingid = GetRegexStr(jsonText, "synctime");
-                //textBox3.Text = "平台时间:" + ModPublicJHHB.testingid;
-
                 string timestring = GetRegexStr(jsonText, "synctime");
-                timestring = timestring.Substring(0, 4) + "/" + timestring.Substring(4, 2) + "/" + timestring.Substring(6, 2) + " " + timestring.Substring(8, 2) + "/" + timestring.Substring(10, 2) + "/" + timestring.Substring(12, 6);
+                timestring = timestring.Substring(0, 4) + "/" + timestring.Substring(4, 2) + "/" + timestring.Substring(6, 2) + " " + timestring.Substring(8, 2) + ":" + timestring.Substring(10, 2) + ":" + timestring.Substring(12, 6);
                 time = DateTime.Parse(timestring);
                 return true;
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[downInspSynctime_Eception]：", er.Message, 3);
+                FileOpreate.SaveLog(er.Message,"[downInspSynctime_Eception]：",  3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -247,6 +343,223 @@ namespace DataUpdate
             }
         }
         //正则提取嵌套内容节点 
+        public DataTable GetVehicleList()
+        {
+            //创建JSON串
+            string modeljson = createCanInfo();
+            //textBoxJson.Text = modeljson;
+
+            //GET数据  
+            List<ModPublicJHHB.uploadRegResult> vlist;
+            if (GetCarInfo(ModPublicJHHB.webAddress, modeljson, "GET",out vlist))
+            {
+                FileOpreate.SaveLog("成功", "[downInspRegInfo_Parser]：", 3);
+                //labelStatus.Text = "POST success!";
+                Console.WriteLine("POST success!");
+                DataTable dt = new DataTable();
+                dt.Columns.Add("jylsh");
+                dt.Columns.Add("jycs");
+                dt.Columns.Add("hphm");
+                dt.Columns.Add("hpys");
+                dt.Columns.Add("hpzl");
+                dt.Columns.Add("cllx");
+                dt.Columns.Add("cpxh");
+                dt.Columns.Add("cpmc");
+                dt.Columns.Add("clsbm");
+                dt.Columns.Add("clscqy");
+                dt.Columns.Add("fdjxh");
+                dt.Columns.Add("fdjscqy");
+                dt.Columns.Add("fdjh");
+                dt.Columns.Add("fdjpl");
+                dt.Columns.Add("fdjedzs");
+                dt.Columns.Add("fdjedgl");
+                dt.Columns.Add("syxz");
+                dt.Columns.Add("ccdjrq");
+                dt.Columns.Add("ccrq");
+                dt.Columns.Add("czmc");
+                dt.Columns.Add("lxdh");
+                dt.Columns.Add("lxdz");
+                dt.Columns.Add("pfbz");
+                dt.Columns.Add("bsqxs");
+                dt.Columns.Add("jqfs");
+                dt.Columns.Add("ryzl");
+                dt.Columns.Add("gyfs");
+                dt.Columns.Add("qdfs");
+                dt.Columns.Add("zdzzl");
+                dt.Columns.Add("jzzl");
+                dt.Columns.Add("zbzl");
+                dt.Columns.Add("qgs");
+                dt.Columns.Add("qdltqy");
+                dt.Columns.Add("chzhq");
+                dt.Columns.Add("rygg");
+                dt.Columns.Add("sjcys");
+                dt.Columns.Add("ssxq");
+                dt.Columns.Add("dws");
+                dt.Columns.Add("jclx");
+                dt.Columns.Add("jcff");
+                dt.Columns.Add("obd");
+                dt.Columns.Add("jczbh");
+                dt.Columns.Add("ljxslc");
+                dt.Columns.Add("dlsj");
+                foreach (ModPublicJHHB.uploadRegResult child in vlist)
+                {
+                    ModPublicJHHB.uploadRegBody child1 = child.body[0];
+                    int a;
+                    double b;
+                    string timestring;
+                    try
+                    {
+                        DataRow dr = dt.NewRow();
+                        dr["jylsh"] = child1.insp.inspregid;
+                        dr["jycs"] = child1.insp.TestTimes;
+                        dr["hphm"] = child1.insp_vehicle.License;
+                        dr["hpys"] = DicHpys.GetValue(child1.insp_vehicle.LicenseType, "");
+                        dr["hpzl"] = DicHpzl.GetValue(child1.insp_vehicle.LicenseCode, "");
+                        dr["cllx"] = child1.insp_vehicle.VehicleType;
+                        dr["cpxh"] = child1.insp_vehicle.Brand;
+                        dr["cpmc"] = child1.insp_vehicle.Brand;
+                        dr["clsbm"] = child1.insp_vehicle.VIN;
+                        dr["clscqy"] = child1.insp_vehicle.Manuf;
+                        dr["fdjxh"] = child1.insp_vehicle.Engine;
+                        dr["fdjscqy"] = "";
+                        dr["fdjh"] = child1.insp_vehicle.EngineNo;
+                        dr["fdjpl"] = child1.insp_vehicle.ED;
+                        if (double.TryParse(child1.insp_vehicle.GVM, out b))
+                            dr["fdjedzs"] = b.ToString("0");
+                        else
+                            dr["fdjedzs"] = "3000";
+                        
+                        dr["fdjedgl"] = child1.insp_vehicle.EnginePower;
+                        
+                        dr["syxz"] = "";
+                        try
+                        {
+                            timestring = child1.insp_vehicle.MDate;
+                            timestring = timestring.Substring(0, 4) + "/" + timestring.Substring(4, 2) + "/" + timestring.Substring(6, 2) + " " + timestring.Substring(8, 2) + ":" + timestring.Substring(10, 2) + ":" + timestring.Substring(12, 2);
+                            dr["ccdjrq"] = DateTime.Parse(timestring).ToString("yyyy-MM-dd");
+                        }
+                        catch
+                        {
+                            dr["ccdjrq"] = DateTime.Now;
+                        }
+                        dr["ccrq"] = dr["ccdjrq"];
+                        dr["czmc"] = child1.insp_vehicle.Owner;
+                        dr["lxdh"] = child1.insp_vehicle.OwnerTel;
+                        dr["lxdz"] = child1.insp_vehicle.OwnerAddr;
+                        dr["pfbz"] = DicPfbz.GetValue(child1.insp_vehicle.Standard, "");
+                        dr["bsqxs"] = DicBsqxs.GetValue(child1.insp_vehicle.Gear, "");
+                        dr["jqfs"] = DicJqfs.GetValue(child1.insp_vehicle.AirIn, "");
+                        dr["ryzl"] = DicRlzl.GetValue(child1.insp_vehicle.FuelType, "");
+                        dr["gyfs"] = DicGyfs.GetValue(child1.insp_vehicle.FuelWay, "");
+                        dr["qdfs"] = DicQdfs.GetValue(child1.insp_vehicle.DriveMode, "");
+                        if (int.TryParse(child1.insp_vehicle.GVM, out a))
+                            dr["zdzzl"] = child1.insp_vehicle.GVM;
+                        else
+                            dr["zdzzl"] = "1500";
+                        if (int.TryParse(child1.insp_vehicle.RM, out a))
+                            dr["jzzl"] = child1.insp_vehicle.RM;
+                        else
+                            dr["jzzl"] = "1000";
+
+                        dr["zbzl"] = (int.Parse(dr["jzzl"].ToString()) - 100).ToString();// child1.insp_vehicle.VIN;
+                        dr["qgs"] = child1.insp_vehicle.Cylinders;
+                        dr["qdltqy"] = "";
+                        dr["chzhq"] = "";
+                        dr["rygg"] = "";
+                        dr["sjcys"] = child1.insp_vehicle.Passcap;
+                        dr["ssxq"] = "";
+                        dr["dws"] = "";
+                        dr["jclx"] = "";
+                        dr["jcff"] = DicJcff.GetValue(child1.insp.TestType, "");
+                        dr["obd"] = DicOBD.GetValue(child1.insp_vehicle.isOBD, "");
+                        dr["jczbh"] = child1.insp.TsNo;
+                        dr["ljxslc"] = child1.insp_vehicle.Odometer;
+                        try
+                        {
+                            timestring = child1.insp.TestType;
+                            timestring = timestring.Substring(0, 4) + "/" + timestring.Substring(4, 2) + "/" + timestring.Substring(6, 2) + " " + timestring.Substring(8, 2) + ":" + timestring.Substring(10, 2) + ":" + timestring.Substring(12, 2);
+                            dr["dlsj"] = DateTime.Parse(timestring).ToString("yyyy-MM-dd");
+                        }
+                        catch
+                        {
+                            dr["dlsj"] = DateTime.Now;
+                        }
+                        dt.Rows.Add(dr);
+                    }
+                    catch(Exception er)
+                    {
+                        FileOpreate.SaveLog("解析车辆信息失败，license="+child1.insp_vehicle.License+",exception:"+er.Message, "[downInspRegInfo_Parser]：", 3);
+                    }
+                }
+                return dt;
+            }
+            else
+            {
+                FileOpreate.SaveLog("失败", "[downInspRegInfo_Parser]：", 3);
+                //labelStatus.Text = "POST fail!";
+                Console.WriteLine("POST fail!");
+                return null;
+            }
+        }
+        string createCanInfo()
+        {
+            ModPublicJHHB.downInspRegInfo model = new ModPublicJHHB.downInspRegInfo();
+            model.jkid = "downInspRegInfo";
+            model.jksqm = ModPublicJHHB.jksqm;
+            model.VIN = "";
+            model.EngineNo = "";
+            model.TsNo = ModPublicJHHB.TsNo;
+            string json = JsonConvert.SerializeObject(model);
+            FileOpreate.SaveLog("[downInspRegInfo]：", json, 3);
+            return json;
+        }
+
+
+        // 车辆信息获取
+        bool GetCarInfo(string webadd, string content, string model,out List<ModPublicJHHB.uploadRegResult> vlist)
+        {
+            vlist = new List<ModPublicJHHB.uploadRegResult>();
+            if (content == "")
+            {
+                MessageBox.Show("数据不能为空"); return false;
+            }
+            try
+            {
+                byte[] d = System.Text.Encoding.UTF8.GetBytes(content);
+                System.Net.WebClient aaa = new System.Net.WebClient();
+                aaa.Headers.Add("Content-Type", "application/json; charset=UTF-8");
+                byte[] res;
+                if (model == "GET")
+                {
+                    res = aaa.UploadData(webadd, "POST", d);
+                }
+                else
+                {
+                    res = aaa.UploadData(webadd, "POST", d);
+                }
+                String ReadData = System.Text.Encoding.UTF8.GetString(res);
+                //textBoxResult.Text = ReadData;
+                string jsonText = ReadData;
+                FileOpreate.SaveLog(jsonText, "[downInspRegInfo_Ack]：", 3);
+                ModPublicJHHB.uploadAck ack = JsonConvert.DeserializeObject<ModPublicJHHB.uploadAck>(jsonText);
+                if (ack.result[0].code != null && ack.result[0].code != "" && ack.result[0].code != "1" && ack.result[0].code != "2")
+                {
+                    MessageBox.Show("Code:" + ack.result[0].code + "\r\n;Message:" + ack.result[0].message);
+                    return false;
+                }
+                ModPublicJHHB.uploadReg reg = JsonConvert.DeserializeObject<ModPublicJHHB.uploadReg>(jsonText);
+                vlist = reg.result;
+                return true;
+            }
+            catch (Exception er)
+            {
+                FileOpreate.SaveLog(er.Message, "[downInspRegInfo_Eception]：", 3);
+                Console.WriteLine("exception occured:" + er.Message);
+                //labelStatus.Text = "exception occured:" + er.Message;
+                //textBoxResult.Text = er.Message;
+                return false;
+            }
+        }
         private string GetRegexStr(string jsonText, string reString)
         {
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("\"" + reString + "\":\"([^\"]*)\"");
@@ -264,13 +577,13 @@ namespace DataUpdate
             {
                 //labelStatus.Text = "POST success!";
 
-                FileOpreate.SaveLog("[downInspODBResultInfo_Parser]：", "成功", 3);
+                FileOpreate.SaveLog( "成功","[downInspODBResultInfo_Parser]：", 3);
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[downInspODBResultInfo_Parser]：", "失败", 3);
+                FileOpreate.SaveLog( "失败","[downInspODBResultInfo_Parser]：", 3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -316,7 +629,7 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[downInspODBResultInfo_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog(jsonText,"[downInspODBResultInfo_Ack]：",  3);
                 Newtonsoft.Json.Linq.JObject JsonObj;
                 JsonObj = (JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jsonText); //将json字符串转化为json对象 
 
@@ -332,7 +645,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[downInspODBResultInfo_Eception]：", er.Message, 3);
+                FileOpreate.SaveLog( er.Message,"[downInspODBResultInfo_Eception]：", 3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -351,13 +664,13 @@ namespace DataUpdate
             {
                 //labelStatus.Text = "POST success!";
 
-                FileOpreate.SaveLog("[downInspTestingResultInfo_Parser]：", "成功", 3);
+                FileOpreate.SaveLog("成功","[downInspTestingResultInfo_Parser]：",  3);
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[downInspTestingResultInfo_Parser]：", "失败", 3);
+                FileOpreate.SaveLog("失败","[downInspTestingResultInfo_Parser]：",  3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -373,7 +686,7 @@ namespace DataUpdate
             model.inspregid = obj;
 
             string json = JsonConvert.SerializeObject(model);
-            FileOpreate.SaveLog("[downInspTestingResultInfo]：", json, 3);
+            FileOpreate.SaveLog(json,"[downInspTestingResultInfo]：",  3);
             return json;
         }
 
@@ -403,7 +716,7 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[downInspTestingResultInfo_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog(jsonText,"[downInspTestingResultInfo_Ack]：",  3);
                 Newtonsoft.Json.Linq.JObject JsonObj;
                 JsonObj = (JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jsonText); //将json字符串转化为json对象 
 
@@ -419,7 +732,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[downInspTestingResultInfo_Eception]：", er.Message, 3);
+                FileOpreate.SaveLog( er.Message, "[downInspTestingResultInfo_Eception]：",3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -434,14 +747,14 @@ namespace DataUpdate
             //GET数据 
             if (GetResultODB(ModPublicJHHB.webAddress, modeljson, "GET",out odbresultid))
             {
-                FileOpreate.SaveLog("[uploadInspResultODB_Parser]：", "成功", 3);
+                FileOpreate.SaveLog("成功","[uploadInspResultODB_Parser]：",  3);
                 //labelStatus.Text = "POST success!";
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[uploadInspResultODB_Parser]：", "失败", 3);
+                FileOpreate.SaveLog( "失败","[uploadInspResultODB_Parser]：", 3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -467,7 +780,7 @@ namespace DataUpdate
 
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");                   //id Odb检测记录id   字符(32)  检测线odb检测结果私有唯一标识 是
             bo.TsNo = ModPublicJHHB.TsNo;                 //TsNo 检测机构编号  字符(16)  格式详见3定义部分 是
-            bo.inspregid = ((DataRow)obj_car)["CLID"].ToString();            //inspregid 检验登录ID  字符(32)  由环保局返回的检测登录唯一标识 是
+            bo.inspregid = ((DataRow)obj_car)["JYLSH"].ToString();            //inspregid 检验登录ID  字符(32)  由环保局返回的检测登录唯一标识 是
             bo.VIN = ((DataRow)obj_car)["CLSBM"].ToString();                  //VIN 车辆识别代号  字符(32)  车辆识别代号VIN（须完整上报）	是
             bo.EngineNo = ((DataRow)obj_car)["FDJHM"].ToString();             //EngineNo    发动机编号 字符(32)      是
             bo.odo = ((DataRow)obj_odb)["MILXSLC"].ToString();                  //odo 车辆累计行驶里程（ODO）	数值(4)       是
@@ -519,7 +832,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspResultODB]：", json, 3);
+            FileOpreate.SaveLog( json, "[uploadInspResultODB]：",3);
 
             return json;
         }
@@ -549,7 +862,7 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[uploadInspResultODB_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog(jsonText,"[uploadInspResultODB_Ack]：",  3);
                 Newtonsoft.Json.Linq.JObject JsonObj;
                 JsonObj = (JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jsonText); //将json字符串转化为json对象 
 
@@ -566,7 +879,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[uploadInspResultODB_Eception]：", er.Message, 3);
+                FileOpreate.SaveLog( er.Message,"[uploadInspResultODB_Eception]：", 3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -583,14 +896,14 @@ namespace DataUpdate
             //GET数据 
             if (GetODBProcess(ModPublicJHHB.webAddress, modeljson, "GET"))
             {
-                FileOpreate.SaveLog("[uploadInspProcessODB_Parser]：", "成功", 3);
+                FileOpreate.SaveLog( "成功","[uploadInspProcessODB_Parser]：", 3);
                 //labelStatus.Text = "POST success!";
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[uploadInspProcessODB_Parser]：", "失败", 3);
+                FileOpreate.SaveLog( "失败","[uploadInspProcessODB_Parser]：", 3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -605,7 +918,7 @@ namespace DataUpdate
         /// <returns></returns>
         public string createODBProcess(object obj_car, object obj_odb,string odbresultid)
         {
-            string inspregid = ((DataRow)obj_odb)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_car)["JYLSH"].ToString();
             string jcff = ((DataRow)obj_car)["JCFF"].ToString();
 
             if (jcff == "ASM" || jcff == "SDS" || jcff == "VMAS")
@@ -651,7 +964,7 @@ namespace DataUpdate
                 dt.body = body;
                 //传入初始化好的对象
                 string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-                FileOpreate.SaveLog("[uploadInspProcessODB]：", json, 3);
+                FileOpreate.SaveLog(json,"[uploadInspProcessODB]：",  3);
 
                 return json;
             }
@@ -711,7 +1024,7 @@ namespace DataUpdate
                 dt.body = body;
                 //传入初始化好的对象
                 string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-                FileOpreate.SaveLog("[uploadInspProcessODB]：", json, 3);
+                FileOpreate.SaveLog(json, "[uploadInspProcessODB]：", 3);
 
                 return json;
             }
@@ -741,9 +1054,9 @@ namespace DataUpdate
                 }
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[uploadInspProcessODB_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog(jsonText,"[uploadInspProcessODB_Ack]：",  3);
                 ModPublicJHHB.uploadAck ack = JsonConvert.DeserializeObject<ModPublicJHHB.uploadAck>(jsonText);
-                if (ack.result[0].code != "1" && ack.result[0].message != "2")
+                if (ack.result[0].code != "1" && ack.result[0].code != "2")
                 {
                     //MessageBox.Show("Code:" + ack.result[0].code + "\r\n;Message:" + ack.result[0].message);
                     return false;
@@ -752,7 +1065,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[uploadInspProcessODB_Eception]：", er.Message, 3);
+                FileOpreate.SaveLog(er.Message,"[uploadInspProcessODB_Eception]：",  3);
                 Console.WriteLine("exception occured:" + er.Message);
                 return false;
             }
@@ -774,14 +1087,14 @@ namespace DataUpdate
             //GET数据 
             if (GetIuprODB(ModPublicJHHB.webAddress, modeljson, "GET"))
             {
-                FileOpreate.SaveLog("[uploadInspIuprODB_Parser]：", "成功", 3);
+                FileOpreate.SaveLog("成功","[uploadInspIuprODB_Parser]：",  3);
                 //labelStatus.Text = "POST success!";
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[uploadInspIuprODB_Parser]：", "失败", 3);
+                FileOpreate.SaveLog("失败","[uploadInspIuprODB_Parser]：",  3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -796,7 +1109,7 @@ namespace DataUpdate
         /// <returns></returns>
         public string createODBIUPR(object obj_car, object obj_odb, string odbresultid)
         {
-            string inspregid = ((DataRow)obj_odb)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_odb)["JYLSH"].ToString();
             string jcff = ((DataRow)obj_car)["JCFF"].ToString();
             ModPublicJHHB.uploadInspIuprODB model = new ModPublicJHHB.uploadInspIuprODB();
             model.jkid = "uploadInspIuprODB";
@@ -852,7 +1165,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);
-            FileOpreate.SaveLog("[uploadInspIuprODB]：", json, 3);
+            FileOpreate.SaveLog( json, "[uploadInspIuprODB]：",3);
 
             return json;
 
@@ -882,9 +1195,9 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[uploadInspIuprODB_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog(jsonText,"[uploadInspIuprODB_Ack]：",  3);
                 ModPublicJHHB.uploadAck ack = JsonConvert.DeserializeObject<ModPublicJHHB.uploadAck>(jsonText);
-                if (ack.result[0].code != "1" && ack.result[0].message != "2")
+                if (ack.result[0].code != "1" && ack.result[0].code != "2")
                 {
                     //MessageBox.Show("Code:" + ack.result[0].code + "\r\n;Message:" + ack.result[0].message);
                     return false;
@@ -893,7 +1206,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[uploadInspIuprODB_Eception]：", er.Message, 3);
+                FileOpreate.SaveLog( er.Message,"[uploadInspIuprODB_Eception]：", 3);
                 Console.WriteLine("exception occured:" + er.Message);
                 return false;
             }
@@ -902,7 +1215,7 @@ namespace DataUpdate
         public string createResultLIGHTPROOF(object obj_car,object obj_result)
         {
 
-            string inspregid = ((DataRow)obj_car)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_car)["JYLSH"].ToString();
             ModPublicJHHB.uploadInspResultLIGHTPROOF model = new ModPublicJHHB.uploadInspResultLIGHTPROOF();
             model.jkid = "uploadInspResultLIGHTPROOF";
             model.jksqm = ModPublicJHHB.jksqm;
@@ -921,7 +1234,7 @@ namespace DataUpdate
             bo.LicenseType = DicCpysR.GetValue(((DataRow)obj_car)["CPYS"].ToString(), "");   //LicenseType 车牌颜色    数值(1)   详见数据字典8.2序11 FALSE
             bo.LicenseCode = DicCpysR.GetValue(((DataRow)obj_car)["HPZL"].ToString(), "");  //LicenseCode 号牌种类(GA)字符(2)   详见数据字典8.1序1 FALSE
             bo.VIN = ((DataRow)obj_car)["CLSBM"].ToString();  //VIN 车辆识别代号  字符(20)  行驶证上的车辆识别代号VIN（须完整上报）	是
-            bo.EngineNo = ((DataRow)obj_car)["CLSBM"].ToString();  //EngineNo    发动机号    字符(20)      是
+            bo.EngineNo = ((DataRow)obj_car)["FDJHM"].ToString();  //EngineNo    发动机号    字符(20)      是
             bo.TsNo = ModPublicJHHB.TsNo;  //TsNo    检测机构编号  字符(16)  格式详见3定义部分   是
             bo.FuelType = ((DataRow)obj_car)["RLZL"].ToString();  //FuelType    燃料种类(GA)    字符(4)   详见数据字典8.1序6 是
             bo.TestLineNo = ((DataRow)obj_car)["LINEID"].ToString();  //TestLineNo  检测线代码   字符(8)   格式详见3定义部分   是
@@ -932,9 +1245,9 @@ namespace DataUpdate
             bo.TestType = DicJcffR.GetValue(((DataRow)obj_car)["JCFF"].ToString(), "");  //TestType    检测方法    字符(1)   详见数据字典8.2序4 是
             bo.TestJudge = DicResultR.GetValue(((DataRow)obj_car)["JCJG"].ToString(), "");  //TestJudge   检测结果    字符(1)   1:合格0：不合格，上报值为（0或1）	是
             bo.Samplingdepth = "400";  //Samplingdepth   采样深度 数值(4)       是
-            bo.Temperature = ((DataRow)obj_car)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
-            bo.Humidity = ((DataRow)obj_car)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
-            bo.Atpressure = ((DataRow)obj_car)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
+            bo.Temperature = ((DataRow)obj_result)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
+            bo.Humidity = ((DataRow)obj_result)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
+            bo.Atpressure = ((DataRow)obj_result)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
             bo.IdleRev = ((DataRow)obj_result)["DSZS"].ToString();  //IdleRev 实测转速    数值(8)	（r / min）	是
             bo.RPM = ((DataRow)obj_car)["EDZS"].ToString();  //RPM 额定转速    数值(8)	（r / min）	是
             bo.SmokeK1 = ((DataRow)obj_result)["FOURTHDATA"].ToString();  //SmokeK1 光吸收系数1  数值(12, 4)	（m - 1），倒数第一次 是
@@ -950,7 +1263,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspResultLIGHTPROOF]：", json, 3);
+            FileOpreate.SaveLog( json, "[uploadInspResultLIGHTPROOF]：",3);
 
             return json;
         }
@@ -959,7 +1272,7 @@ namespace DataUpdate
         public string createResultLUGDOWN(object obj_car, object obj_result)
         {
 
-            string inspregid = ((DataRow)obj_car)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_car)["JYLSH"].ToString();
 
             ModPublicJHHB.uploadInspResultLUGDOWN model = new ModPublicJHHB.uploadInspResultLUGDOWN();
             model.jkid = "uploadInspResultLUGDOWN";
@@ -979,7 +1292,7 @@ namespace DataUpdate
             bo.LicenseType = DicCpysR.GetValue(((DataRow)obj_car)["CPYS"].ToString(), "");   //LicenseType 车牌颜色    数值(1)   详见数据字典8.2序11 FALSE
             bo.LicenseCode = DicCpysR.GetValue(((DataRow)obj_car)["HPZL"].ToString(), "");  //LicenseCode 号牌种类(GA)字符(2)   详见数据字典8.1序1 FALSE
             bo.VIN = ((DataRow)obj_car)["CLSBM"].ToString();  //VIN 车辆识别代号  字符(20)  行驶证上的车辆识别代号VIN（须完整上报）	是
-            bo.EngineNo = ((DataRow)obj_car)["CLSBM"].ToString();  //EngineNo    发动机号    字符(20)      是
+            bo.EngineNo = ((DataRow)obj_car)["FDJHM"].ToString();  //EngineNo    发动机号    字符(20)      是
             bo.TsNo = ModPublicJHHB.TsNo;  //TsNo    检测机构编号  字符(16)  格式详见3定义部分   是
             bo.FuelType = ((DataRow)obj_car)["RLZL"].ToString();  //FuelType    燃料种类(GA)    字符(4)   详见数据字典8.1序6 是
             bo.TestLineNo = ((DataRow)obj_car)["LINEID"].ToString();  //TestLineNo  检测线代码   字符(8)   格式详见3定义部分   是
@@ -990,9 +1303,9 @@ namespace DataUpdate
             bo.TestType = DicJcffR.GetValue(((DataRow)obj_car)["JCFF"].ToString(), "");  //TestType    检测方法    字符(1)   详见数据字典8.2序4 是
             bo.TestJudge = DicResultR.GetValue(((DataRow)obj_car)["JCJG"].ToString(), "");  //TestJudge   检测结果    字符(1)   1:合格0：不合格，上报值为（0或1）	是
             bo.Samplingdepth = "400";  //Samplingdepth   采样深度 数值(4)       是
-            bo.Temperature = ((DataRow)obj_car)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
-            bo.Humidity = ((DataRow)obj_car)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
-            bo.Atpressure = ((DataRow)obj_car)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
+            bo.Temperature = ((DataRow)obj_result)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
+            bo.Humidity = ((DataRow)obj_result)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
+            bo.Atpressure = ((DataRow)obj_result)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
             bo.RPM = ((DataRow)obj_car)["EDZS"].ToString();  //RPM 发动机额定转速 数值(8)	（r / min）	是
             bo.MaxRPM = ((DataRow)obj_result)["VELMAXHPZS"].ToString();  //MaxRPM  发动机最大转速 数值(8)	（r / min）	是
             bo.CorVelMaxhp = ((DataRow)obj_result)["VELMAXHP"].ToString();  //CorVelMaxhp 修正MAXHP时滚筒线速度   数值(8)	（r / min）	是
@@ -1021,7 +1334,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspResultLUGDOWN]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspResultLUGDOWN]：", 3);
 
             return json;
         }
@@ -1030,7 +1343,7 @@ namespace DataUpdate
         public string createResultDIDLE(object obj_car, object obj_result)
         {
 
-            string inspregid = ((DataRow)obj_car)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_car)["JYLSH"].ToString();
 
             ModPublicJHHB.uploadInspResultDIDLE model = new ModPublicJHHB.uploadInspResultDIDLE();
             model.jkid = "uploadInspResultDIDLE";
@@ -1050,7 +1363,7 @@ namespace DataUpdate
             bo.LicenseType = DicCpysR.GetValue(((DataRow)obj_car)["CPYS"].ToString(), "");   //LicenseType 车牌颜色    数值(1)   详见数据字典8.2序11 FALSE
             bo.LicenseCode = DicCpysR.GetValue(((DataRow)obj_car)["HPZL"].ToString(), "");  //LicenseCode 号牌种类(GA)字符(2)   详见数据字典8.1序1 FALSE
             bo.VIN = ((DataRow)obj_car)["CLSBM"].ToString();  //VIN 车辆识别代号  字符(20)  行驶证上的车辆识别代号VIN（须完整上报）	是
-            bo.EngineNo = ((DataRow)obj_car)["CLSBM"].ToString();  //EngineNo    发动机号    字符(20)      是
+            bo.EngineNo = ((DataRow)obj_car)["FDJHM"].ToString();  //EngineNo    发动机号    字符(20)      是
             bo.TsNo = ModPublicJHHB.TsNo;  //TsNo    检测机构编号  字符(16)  格式详见3定义部分   是
             bo.FuelType = ((DataRow)obj_car)["RLZL"].ToString();  //FuelType    燃料种类(GA)    字符(4)   详见数据字典8.1序6 是
             bo.TestLineNo = ((DataRow)obj_car)["LINEID"].ToString();  //TestLineNo  检测线代码   字符(8)   格式详见3定义部分   是
@@ -1061,9 +1374,9 @@ namespace DataUpdate
             bo.TestType = DicJcffR.GetValue(((DataRow)obj_car)["JCFF"].ToString(), "");  //TestType    检测方法    字符(1)   详见数据字典8.2序4 是
             bo.TestJudge = DicResultR.GetValue(((DataRow)obj_car)["JCJG"].ToString(), "");  //TestJudge   检测结果    字符(1)   1:合格0：不合格，上报值为（0或1）	是
             bo.Samplingdepth = "400";  //Samplingdepth   采样深度 数值(4)       是
-            bo.Temperature = ((DataRow)obj_car)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
-            bo.Humidity = ((DataRow)obj_car)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
-            bo.Atpressure = ((DataRow)obj_car)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
+            bo.Temperature = ((DataRow)obj_result)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
+            bo.Humidity = ((DataRow)obj_result)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
+            bo.Atpressure = ((DataRow)obj_result)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
 
             bo.Gdszs = ((DataRow)obj_result)["ZSHIGH"].ToString();  //Gdszs   高怠速转速值  数值(8)	（r / min）	是
             bo.Dszs = ((DataRow)obj_result)["ZSLOW"].ToString();  //Dszs    低怠速转速值  数值(8)	（r / min）	是
@@ -1089,7 +1402,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspResultDIDLE]：", json, 3);
+            FileOpreate.SaveLog(json,"[uploadInspResultDIDLE]：",  3);
 
             return json;
         }
@@ -1099,7 +1412,7 @@ namespace DataUpdate
         public string createResultVMAS(object obj_car, object obj_result)
         {
 
-            string inspregid = ((DataRow)obj_car)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_car)["JYLSH"].ToString();
 
             ModPublicJHHB.uploadInspResultVMAS model = new ModPublicJHHB.uploadInspResultVMAS();
             model.jkid = "uploadInspResultVMAS";
@@ -1119,7 +1432,7 @@ namespace DataUpdate
             bo.LicenseType = DicCpysR.GetValue(((DataRow)obj_car)["CPYS"].ToString(), "");   //LicenseType 车牌颜色    数值(1)   详见数据字典8.2序11 FALSE
             bo.LicenseCode = DicCpysR.GetValue(((DataRow)obj_car)["HPZL"].ToString(), "");  //LicenseCode 号牌种类(GA)字符(2)   详见数据字典8.1序1 FALSE
             bo.VIN = ((DataRow)obj_car)["CLSBM"].ToString();  //VIN 车辆识别代号  字符(20)  行驶证上的车辆识别代号VIN（须完整上报）	是
-            bo.EngineNo = ((DataRow)obj_car)["CLSBM"].ToString();  //EngineNo    发动机号    字符(20)      是
+            bo.EngineNo = ((DataRow)obj_car)["FDJHM"].ToString();  //EngineNo    发动机号    字符(20)      是
             bo.TsNo = ModPublicJHHB.TsNo;  //TsNo    检测机构编号  字符(16)  格式详见3定义部分   是
             bo.FuelType = ((DataRow)obj_car)["RLZL"].ToString();  //FuelType    燃料种类(GA)    字符(4)   详见数据字典8.1序6 是
             bo.TestLineNo = ((DataRow)obj_car)["LINEID"].ToString();  //TestLineNo  检测线代码   字符(8)   格式详见3定义部分   是
@@ -1130,9 +1443,9 @@ namespace DataUpdate
             bo.TestType = DicJcffR.GetValue(((DataRow)obj_car)["JCFF"].ToString(), "");  //TestType    检测方法    字符(1)   详见数据字典8.2序4 是
             bo.TestJudge = DicResultR.GetValue(((DataRow)obj_car)["JCJG"].ToString(), "");  //TestJudge   检测结果    字符(1)   1:合格0：不合格，上报值为（0或1）	是
             bo.Samplingdepth = "400";  //Samplingdepth   采样深度 数值(4)       是
-            bo.Temperature = ((DataRow)obj_car)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
-            bo.Humidity = ((DataRow)obj_car)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
-            bo.Atpressure = ((DataRow)obj_car)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
+            bo.Temperature = ((DataRow)obj_result)["WD"].ToString();  //Temperature 温度  数值(12, 4)	（Co）	是
+            bo.Humidity = ((DataRow)obj_result)["SD"].ToString();  //Humidity    湿度  数值(12, 4)	（%）	是
+            bo.Atpressure = ((DataRow)obj_result)["DQY"].ToString();  //Atpressure  气压  数值(12, 4)	（kPa）	是
             bo.HC = ((DataRow)obj_result)["HCZL"].ToString();  //HC  HC排放结果  数值(12, 4)	（g / km）	是
             bo.CO = ((DataRow)obj_result)["COZL"].ToString();  //CO  CO排放结果  数值(12, 4)	（g / km）	是
             bo.NOx = ((DataRow)obj_result)["NOXZL"].ToString();  //NOx NOX排放结果 数值(12, 4)	（g / km）	是
@@ -1151,7 +1464,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspResultVMAS]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspResultVMAS]：", 3);
 
             return json;
         }
@@ -1181,7 +1494,7 @@ namespace DataUpdate
             //GET数据 提取时间信息
             if (Get尾气检测结果(ModPublicJHHB.webAddress, modeljson, "GET",out testingid))
             {
-                FileOpreate.SaveLog("[尾气检测结果上传_Parser]：", "成功", 3);
+                FileOpreate.SaveLog( "成功","[尾气检测结果上传_Parser]：", 3);
                 //labelStatus.Text = "POST success!";
                 Console.WriteLine("POST success!");
                 return true;
@@ -1219,9 +1532,9 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[尾气检测结果上传_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog( jsonText,"[尾气检测结果上传_Ack]：", 3);
                 ModPublicJHHB.uploadAck ack = JsonConvert.DeserializeObject<ModPublicJHHB.uploadAck>(jsonText);
-                if (ack.result[0].code != "1" && ack.result[0].message != "2")
+                if (ack.result[0].code != "1" && ack.result[0].code != "2")
                 {
                     //MessageBox.Show("Code:" + ack.result[0].code + "\r\n;Message:" + ack.result[0].message);
                     return false;
@@ -1236,7 +1549,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[尾气检测结果上传_Exception]：", er.Message, 3);
+                FileOpreate.SaveLog( er.Message, "[尾气检测结果上传_Exception]：",3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -1269,14 +1582,14 @@ namespace DataUpdate
             //GET数据 提取时间信息
             if (Get尾气检测过程(ModPublicJHHB.webAddress, modeljson, "GET"))
             {
-                FileOpreate.SaveLog("[尾气过程数据上传_Parser]：", "成功", 3);
+                FileOpreate.SaveLog( "成功","[尾气过程数据上传_Parser]：",3);
                 //labelStatus.Text = "POST success!";
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[尾气过程数据上传_Parser]：", "成功", 3);
+                FileOpreate.SaveLog("成功","[尾气过程数据上传_Parser]：",  3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -1286,7 +1599,7 @@ namespace DataUpdate
         public string createProcessLIGHTPROOF(object obj_car,object obj_data,string testingid)
         {
 
-            string inspregid = ((DataRow)obj_data)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_data)["JYLSH"].ToString();
             string[] MMTIME = ((DataRow)obj_data)["MMTIME"].ToString().Split(',');
             string[] MMLB = ((DataRow)obj_data)["MMLB"].ToString().Split(',');
             string[] MMK = ((DataRow)obj_data)["MMK"].ToString().Split(',');
@@ -1365,7 +1678,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspProcessLIGHTPROOF]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspProcessLIGHTPROOF]：", 3);
 
             return json;
         }
@@ -1374,7 +1687,7 @@ namespace DataUpdate
         // 7.2.2.2.3 加载减速法检测过程数据报文生成
         public string createProcessLUGDOWN(object obj_car, object obj_data, string testingid)
         {
-            string inspregid = ((DataRow)obj_data)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_data)["JYLSH"].ToString();
             string[] MMTIME = ((DataRow)obj_data)["MMTIME"].ToString().Split(',');
             string[] MMLB = ((DataRow)obj_data)["MMLB"].ToString().Split(',');
             string[] MMCS = ((DataRow)obj_data)["MMCS"].ToString().Split(',');
@@ -1450,7 +1763,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspProcessLUGDOWN]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspProcessLUGDOWN]：", 3);
 
             return json;
         }
@@ -1460,7 +1773,7 @@ namespace DataUpdate
         public string createProcessDIDLE(object obj_car, object obj_data, string testingid)
         {
 
-            string inspregid = ((DataRow)obj_data)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_data)["JYLSH"].ToString();
             string[] MMTIME = ((DataRow)obj_data)["MMTIME"].ToString().Split(',');
             string[] MMLB = ((DataRow)obj_data)["MMLB"].ToString().Split(',');
             string[] MMHC = ((DataRow)obj_data)["MMHC"].ToString().Split(',');
@@ -1559,7 +1872,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspProcessDIDLE]：", json, 3);
+            FileOpreate.SaveLog(json,"[uploadInspProcessDIDLE]：",  3);
 
             return json;
         }
@@ -1568,7 +1881,7 @@ namespace DataUpdate
         // 7.2.2.2.6 简易瞬态工况法检测过程数据报文生成
         public string createProcessVMAS(object obj_car, object obj_data, string testingid)
         {
-            string inspregid = ((DataRow)obj_data)["CLID"].ToString();
+            string inspregid = ((DataRow)obj_data)["JYLSH"].ToString();
             string[] MMTIME = ((DataRow)obj_data)["MMTIME"].ToString().Split(',');
             string[] MMLB = ((DataRow)obj_data)["MMLB"].ToString().Split(',');
             string[] MMHC = ((DataRow)obj_data)["MMHC"].ToString().Split(',');
@@ -1799,7 +2112,7 @@ namespace DataUpdate
 
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
-            FileOpreate.SaveLog("[uploadInspProcessVMAS]：", json, 3);
+            FileOpreate.SaveLog( json, "[uploadInspProcessVMAS]：",3);
 
             return json;
         }
@@ -1828,9 +2141,9 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[尾气过程数据_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog(jsonText,"[尾气过程数据_Ack]：",  3);
                 ModPublicJHHB.uploadAck ack = JsonConvert.DeserializeObject<ModPublicJHHB.uploadAck>(jsonText);
-                if (ack.result[0].code != "1" && ack.result[0].message != "2")
+                if (ack.result[0].code != "1" && ack.result[0].code != "2")
                 {
                     //MessageBox.Show("Code:" + ack.result[0].code + "\r\n;Message:" + ack.result[0].message);
                     return false;
@@ -1839,7 +2152,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[尾气过程数据_Excetion]：", er.Message, 3);
+                FileOpreate.SaveLog(er.Message,"[尾气过程数据_Excetion]：",  3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -1855,14 +2168,14 @@ namespace DataUpdate
             //GET数据 提取时间信息
             if (GetTestingCheck(ModPublicJHHB.webAddress, modeljson, "GET",out jcbgbh))
             {
-                FileOpreate.SaveLog("[downInspTestingCheck_Parser]：", "成功", 3);
+                FileOpreate.SaveLog( "成功","[downInspTestingCheck_Parser]：", 3);
                 //labelStatus.Text = "POST success!";
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[downInspTestingCheck_Parser]：", "失败", 3);
+                FileOpreate.SaveLog("失败","[downInspTestingCheck_Parser]：",  3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -1878,7 +2191,7 @@ namespace DataUpdate
             model.testingid = testingid;
 
             string json = JsonConvert.SerializeObject(model);
-            FileOpreate.SaveLog("[downInspTestingCheck]：", json, 3);
+            FileOpreate.SaveLog( json,"[downInspTestingCheck]：", 3);
             return json;
         }
 
@@ -1907,7 +2220,7 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[downInspTestingCheck_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog( jsonText, "[downInspTestingCheck_Ack]：",3);
                 Newtonsoft.Json.Linq.JObject JsonObj;
                 JsonObj = (JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(jsonText); //将json字符串转化为json对象 
 
@@ -1918,7 +2231,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[downInspTestingCheck_Exception]：", er.Message, 3);
+                FileOpreate.SaveLog( er.Message,"[downInspTestingCheck_Exception]：", 3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -1963,14 +2276,14 @@ namespace DataUpdate
             }
             if (Get检测设备运行记录(ModPublicJHHB.webAddress, modeljson, "GET"))
             {
-                FileOpreate.SaveLog("[检测设备运行记录_Parser]：", "成功", 3);
+                FileOpreate.SaveLog( "成功","[检测设备运行记录_Parser]：", 3);
                 //labelStatus.Text = "POST success!";
                 Console.WriteLine("POST success!");
                 return true;
             }
             else
             {
-                FileOpreate.SaveLog("[检测设备运行记录_Parser]：", "失败", 3);
+                FileOpreate.SaveLog("失败","[检测设备运行记录_Parser]：",  3);
                 //labelStatus.Text = "POST fail!";
                 Console.WriteLine("POST fail!");
                 return false;
@@ -2000,9 +2313,9 @@ namespace DataUpdate
                 String ReadData = System.Text.Encoding.UTF8.GetString(res);
                 //textBoxResult.Text = ReadData;
                 string jsonText = ReadData;
-                FileOpreate.SaveLog("[检测设备运行记录_Ack]：", jsonText, 3);
+                FileOpreate.SaveLog( jsonText, "[检测设备运行记录_Ack]：",3);
                 ModPublicJHHB.uploadAck ack = JsonConvert.DeserializeObject<ModPublicJHHB.uploadAck>(jsonText);
-                if (ack.result[0].code != "1" && ack.result[0].message != "2")
+                if (ack.result[0].code != "1" && ack.result[0].code != "2")
                 {
                     //MessageBox.Show("Code:" + ack.result[0].code + "\r\n;Message:" + ack.result[0].message);
                     return false;
@@ -2011,7 +2324,7 @@ namespace DataUpdate
             }
             catch (Exception er)
             {
-                FileOpreate.SaveLog("[检测设备运行记录_Excetion]：", er.Message, 3);
+                FileOpreate.SaveLog(er.Message,"[检测设备运行记录_Excetion]：",  3);
                 Console.WriteLine("exception occured:" + er.Message);
                 //labelStatus.Text = "exception occured:" + er.Message;
                 //textBoxResult.Text = er.Message;
@@ -2024,11 +2337,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem测功机自检> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem测功机自检>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem测功机自检>();
             List<ModPublicJHHB.StmDeviceRecordDataItem测功机自检> data = new List<ModPublicJHHB.StmDeviceRecordDataItem测功机自检>();
 
             ModPublicJHHB.StmDeviceRecordDataItem测功机自检 dt = new ModPublicJHHB.StmDeviceRecordDataItem测功机自检();
-            
+            dt.body = new List<ModPublicJHHB.测功机自检bodyItem>();
             ModPublicJHHB.测功机自检bodyItem bo = new ModPublicJHHB.测功机自检bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2041,7 +2354,7 @@ namespace DataUpdate
             bo.opcode = "1";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator=((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2077,7 +2390,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-测功机]：", json, 3);
+            FileOpreate.SaveLog( json, "[uploadInspStmDeviceRecord-测功机]：",3);
             return json;
         }
         string create五气分析仪自检(object obj)
@@ -2086,11 +2399,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem五气分析仪自检> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem五气分析仪自检>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem五气分析仪自检>();
             List<ModPublicJHHB.StmDeviceRecordDataItem五气分析仪自检> data = new List<ModPublicJHHB.StmDeviceRecordDataItem五气分析仪自检>();
 
             ModPublicJHHB.StmDeviceRecordDataItem五气分析仪自检 dt = new ModPublicJHHB.StmDeviceRecordDataItem五气分析仪自检();
-
+            dt.body = new List<ModPublicJHHB.五气分析仪自检bodyItem>();
             ModPublicJHHB.五气分析仪自检bodyItem bo = new ModPublicJHHB.五气分析仪自检bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2103,7 +2416,7 @@ namespace DataUpdate
             bo.opcode = "2";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2127,7 +2440,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-五气分析仪]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-五气分析仪]：", 3);
             return json;
         }
         string create烟度计自检(object obj)
@@ -2136,11 +2449,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem烟度计自检> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem烟度计自检>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem烟度计自检>();
             List<ModPublicJHHB.StmDeviceRecordDataItem烟度计自检> data = new List<ModPublicJHHB.StmDeviceRecordDataItem烟度计自检>();
 
             ModPublicJHHB.StmDeviceRecordDataItem烟度计自检 dt = new ModPublicJHHB.StmDeviceRecordDataItem烟度计自检();
-
+            dt.body = new List<ModPublicJHHB.烟度计自检bodyItem>();
             ModPublicJHHB.烟度计自检bodyItem bo = new ModPublicJHHB.烟度计自检bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2153,7 +2466,7 @@ namespace DataUpdate
             bo.opcode = "3";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2183,7 +2496,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-烟度计]：", json, 3);
+            FileOpreate.SaveLog(json,"[uploadInspStmDeviceRecord-烟度计]：",  3);
             return json;
         }
         string create流量计自检(object obj)
@@ -2192,11 +2505,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem流量计自检> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem流量计自检>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem流量计自检>();
             List<ModPublicJHHB.StmDeviceRecordDataItem流量计自检> data = new List<ModPublicJHHB.StmDeviceRecordDataItem流量计自检>();
 
             ModPublicJHHB.StmDeviceRecordDataItem流量计自检 dt = new ModPublicJHHB.StmDeviceRecordDataItem流量计自检();
-
+            dt.body = new List<ModPublicJHHB.流量计自检bodyItem>();
             ModPublicJHHB.流量计自检bodyItem bo = new ModPublicJHHB.流量计自检bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2209,7 +2522,7 @@ namespace DataUpdate
             bo.opcode = "6";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2231,7 +2544,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-流量计]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-流量计]：", 3);
             return json;
         }
         string create转速计自检(object obj)
@@ -2240,11 +2553,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem发动机转速仪自检> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem发动机转速仪自检>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem发动机转速仪自检>();
             List<ModPublicJHHB.StmDeviceRecordDataItem发动机转速仪自检> data = new List<ModPublicJHHB.StmDeviceRecordDataItem发动机转速仪自检>();
 
             ModPublicJHHB.StmDeviceRecordDataItem发动机转速仪自检 dt = new ModPublicJHHB.StmDeviceRecordDataItem发动机转速仪自检();
-
+            dt.body = new List<ModPublicJHHB.发动机转速仪自检bodyItem>();
             ModPublicJHHB.发动机转速仪自检bodyItem bo = new ModPublicJHHB.发动机转速仪自检bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2257,7 +2570,7 @@ namespace DataUpdate
             bo.opcode = "5";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2279,7 +2592,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-发动机转速仪]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-发动机转速仪]：", 3);
             return json;
         }
         string create电子环境自检(object obj)
@@ -2288,11 +2601,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem电子环境信息仪自检> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem电子环境信息仪自检>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem电子环境信息仪自检>();
             List<ModPublicJHHB.StmDeviceRecordDataItem电子环境信息仪自检> data = new List<ModPublicJHHB.StmDeviceRecordDataItem电子环境信息仪自检>();
 
             ModPublicJHHB.StmDeviceRecordDataItem电子环境信息仪自检 dt = new ModPublicJHHB.StmDeviceRecordDataItem电子环境信息仪自检();
-
+            dt.body = new List<ModPublicJHHB.电子环境信息仪自检bodyItem>();
             ModPublicJHHB.电子环境信息仪自检bodyItem bo = new ModPublicJHHB.电子环境信息仪自检bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2305,7 +2618,7 @@ namespace DataUpdate
             bo.opcode = "1";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2334,7 +2647,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-电子环境信息仪]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-电子环境信息仪]：", 3);
             return json;
         }
 
@@ -2344,11 +2657,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem扭力标定> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem扭力标定>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem扭力标定>();
             List<ModPublicJHHB.StmDeviceRecordDataItem扭力标定> data = new List<ModPublicJHHB.StmDeviceRecordDataItem扭力标定>();
 
             ModPublicJHHB.StmDeviceRecordDataItem扭力标定 dt = new ModPublicJHHB.StmDeviceRecordDataItem扭力标定();
-
+            dt.body = new List<ModPublicJHHB.扭力标定bodyItem>();
             ModPublicJHHB.扭力标定bodyItem bo = new ModPublicJHHB.扭力标定bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2361,11 +2674,11 @@ namespace DataUpdate
             bo.opcode = "2";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
-            bo.result = ((DataRow)obj)["BDJG"].ToString();//  运行结果    字符(1)   1：自检成功；0：自检失败   是
+            bo.result = ((DataRow)obj)["BDJG"].ToString()=="合格"?"1":"0";//  运行结果    字符(1)   1：自检成功；0：自检失败   是
             bo.memo = "";//    备注  字符(255)     FALSE
             bo.exti01 = "3";//   标定点数    字符(4)       是
             bo.extn01 = ((DataRow)obj)["DATA2"].ToString();//     设定值1 数字（10,2）	km / h    是
@@ -2398,7 +2711,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-扭力标定]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-扭力标定]：", 3);
             return json;
         }
         string create车速标定(object obj)
@@ -2407,11 +2720,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem车速标定> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem车速标定>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem车速标定>();
             List<ModPublicJHHB.StmDeviceRecordDataItem车速标定> data = new List<ModPublicJHHB.StmDeviceRecordDataItem车速标定>();
 
             ModPublicJHHB.StmDeviceRecordDataItem车速标定 dt = new ModPublicJHHB.StmDeviceRecordDataItem车速标定();
-
+            dt.body = new List<ModPublicJHHB.车速标定bodyItem>();
             ModPublicJHHB.车速标定bodyItem bo = new ModPublicJHHB.车速标定bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2424,11 +2737,11 @@ namespace DataUpdate
             bo.opcode = "1";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
-            bo.result = ((DataRow)obj)["BDJG"].ToString();//  运行结果    字符(1)   1：自检成功；0：自检失败   是
+            bo.result = ((DataRow)obj)["BDJG"].ToString()=="合格"?"1":"0";//  运行结果    字符(1)   1：自检成功；0：自检失败   是
             bo.memo = "";//    备注  字符(255)     FALSE
             bo.exti01 = "3";//   标定点数    字符(4)       是
             bo.extn01 = ((DataRow)obj)["DATA2"].ToString();//     设定值1 数字（10,2）	km / h    是
@@ -2455,7 +2768,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-车速标定]：", json, 3);
+            FileOpreate.SaveLog( json, "[uploadInspStmDeviceRecord-车速标定]：",3);
             return json;
         }
         string create寄生功率标定(object obj)
@@ -2464,11 +2777,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem寄生功率标定> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem寄生功率标定>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem寄生功率标定>();
             List<ModPublicJHHB.StmDeviceRecordDataItem寄生功率标定> data = new List<ModPublicJHHB.StmDeviceRecordDataItem寄生功率标定>();
 
             ModPublicJHHB.StmDeviceRecordDataItem寄生功率标定 dt = new ModPublicJHHB.StmDeviceRecordDataItem寄生功率标定();
-
+            dt.body = new List<ModPublicJHHB.寄生功率标定bodyItem>();
             ModPublicJHHB.寄生功率标定bodyItem bo = new ModPublicJHHB.寄生功率标定bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2481,11 +2794,11 @@ namespace DataUpdate
             bo.opcode = "3";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
-            bo.result = ((DataRow)obj)["BDJG"].ToString();//  运行结果    字符(1)   1：自检成功；0：自检失败   是
+            bo.result = ((DataRow)obj)["BDJG"].ToString()=="合格"?"1":"0";//  运行结果    字符(1)   1：自检成功；0：自检失败   是
             bo.memo = "";//    备注  字符(255)     FALSE
             bo.extnum = ((DataRow)obj)["DATA11"].ToString();//惯性当量	数字（10,2）	Kg
             bo.exti01 = "5";//   标定点数    字符(4)       是
@@ -2520,7 +2833,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-寄生功率标定]：", json, 3);
+            FileOpreate.SaveLog(json,"[uploadInspStmDeviceRecord-寄生功率标定]：",  3);
             return json;
         }
         string create加载滑行标定(object obj)
@@ -2529,11 +2842,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem加载滑行率标定> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem加载滑行率标定>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem加载滑行率标定>();
             List<ModPublicJHHB.StmDeviceRecordDataItem加载滑行率标定> data = new List<ModPublicJHHB.StmDeviceRecordDataItem加载滑行率标定>();
 
             ModPublicJHHB.StmDeviceRecordDataItem加载滑行率标定 dt = new ModPublicJHHB.StmDeviceRecordDataItem加载滑行率标定();
-
+            dt.body = new List<ModPublicJHHB.加载滑行率标定bodyItem>();
             ModPublicJHHB.加载滑行率标定bodyItem bo = new ModPublicJHHB.加载滑行率标定bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2546,11 +2859,11 @@ namespace DataUpdate
             bo.opcode = "4";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
-            bo.result = ((DataRow)obj)["BDJG"].ToString();//  运行结果    字符(1)   1：自检成功；0：自检失败   是
+            bo.result = ((DataRow)obj)["BDJG"].ToString() == "合格" ? "1" : "0";//  运行结果    字符(1)   1：自检成功；0：自检失败   是
             bo.memo = "";//    备注  字符(255)     FALSE
             bo.extnum = ((DataRow)obj)["DATA25"].ToString();//惯性当量	数字（10,2）	Kg
             bo.exti01 = "2";//   标定点数    字符(4)       是
@@ -2585,7 +2898,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-加载滑行标定]：", json, 3);
+            FileOpreate.SaveLog(json,"[uploadInspStmDeviceRecord-加载滑行标定]：",  3);
             return json;
         }
         string create废气仪标定(object obj)
@@ -2594,11 +2907,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem废气标定> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem废气标定>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem废气标定>();
             List<ModPublicJHHB.StmDeviceRecordDataItem废气标定> data = new List<ModPublicJHHB.StmDeviceRecordDataItem废气标定>();
 
             ModPublicJHHB.StmDeviceRecordDataItem废气标定 dt = new ModPublicJHHB.StmDeviceRecordDataItem废气标定();
-
+            dt.body = new List<ModPublicJHHB.废气标定bodyItem>();
             ModPublicJHHB.废气标定bodyItem bo = new ModPublicJHHB.废气标定bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2611,11 +2924,11 @@ namespace DataUpdate
             bo.opcode = "5";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
-            bo.result = ((DataRow)obj)["BDJG"].ToString();//  运行结果    字符(1)   1：自检成功；0：自检失败   是
+            bo.result = ((DataRow)obj)["BDJG"].ToString() == "合格" ? "1" : "0";//  运行结果    字符(1)   1：自检成功；0：自检失败   是
             bo.memo = "";//    备注  字符(255)     FALSE
             bo.extnum = "0";// 标定气浓度   数字（10,2）		
             bo.exti01 ="4";// 标定点数    字符(4)   第N次标定点数，第二次为一个新记录 是
@@ -2642,7 +2955,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-废气标定]：", json, 3);
+            FileOpreate.SaveLog(json, "[uploadInspStmDeviceRecord-废气标定]：", 3);
             return json;
         }
         string create烟度标定(object obj)
@@ -2651,11 +2964,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem烟度标定> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem烟度标定>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem烟度标定>();
             List<ModPublicJHHB.StmDeviceRecordDataItem烟度标定> data = new List<ModPublicJHHB.StmDeviceRecordDataItem烟度标定>();
 
             ModPublicJHHB.StmDeviceRecordDataItem烟度标定 dt = new ModPublicJHHB.StmDeviceRecordDataItem烟度标定();
-
+            dt.body = new List<ModPublicJHHB.烟度标定bodyItem>();
             ModPublicJHHB.烟度标定bodyItem bo = new ModPublicJHHB.烟度标定bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2668,11 +2981,11 @@ namespace DataUpdate
             bo.opcode = "6";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
-            bo.result = ((DataRow)obj)["BDJG"].ToString();//  运行结果    字符(1)   1：自检成功；0：自检失败   是
+            bo.result = ((DataRow)obj)["BDJG"].ToString() == "合格" ? "1" : "0";//  运行结果    字符(1)   1：自检成功；0：自检失败   是
             bo.memo = "";//    备注  字符(255)     FALSE
             bo.exti01 = "1";// 标定点数    字符(4)       是
             bo.extn01 = ((DataRow)obj)["DATA1"].ToString();// 不透光设定值1 数字（10,2）	% 是
@@ -2696,7 +3009,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-烟度标定]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-烟度标定]：", 3);
             return json;
         }
         string create加载滑行检查(object obj)
@@ -2705,11 +3018,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem加载滑行检查> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem加载滑行检查>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem加载滑行检查>();
             List<ModPublicJHHB.StmDeviceRecordDataItem加载滑行检查> data = new List<ModPublicJHHB.StmDeviceRecordDataItem加载滑行检查>();
 
             ModPublicJHHB.StmDeviceRecordDataItem加载滑行检查 dt = new ModPublicJHHB.StmDeviceRecordDataItem加载滑行检查();
-
+            dt.body = new List<ModPublicJHHB.加载滑行检查bodyItem>();
             ModPublicJHHB.加载滑行检查bodyItem bo = new ModPublicJHHB.加载滑行检查bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2722,7 +3035,7 @@ namespace DataUpdate
             bo.opcode = "11";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2751,7 +3064,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-加载滑行检查]：", json, 3);
+            FileOpreate.SaveLog(json, "[uploadInspStmDeviceRecord-加载滑行检查]：", 3);
             return json;
         }
         string create附加功率损失检查(object obj)
@@ -2760,11 +3073,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem附加功率损失检查> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem附加功率损失检查>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem附加功率损失检查>();
             List<ModPublicJHHB.StmDeviceRecordDataItem附加功率损失检查> data = new List<ModPublicJHHB.StmDeviceRecordDataItem附加功率损失检查>();
 
             ModPublicJHHB.StmDeviceRecordDataItem附加功率损失检查 dt = new ModPublicJHHB.StmDeviceRecordDataItem附加功率损失检查();
-
+            dt.body = new List<ModPublicJHHB.附加功率损失检查bodyItem>();
             ModPublicJHHB.附加功率损失检查bodyItem bo = new ModPublicJHHB.附加功率损失检查bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2777,7 +3090,7 @@ namespace DataUpdate
             bo.opcode = "12";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "15";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2801,7 +3114,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-附加功率损失检查]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-附加功率损失检查]：", 3);
             return json;
         }
         string create分析仪检查(object obj)
@@ -2810,11 +3123,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem分析仪检查> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem分析仪检查>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem分析仪检查>();
             List<ModPublicJHHB.StmDeviceRecordDataItem分析仪检查> data = new List<ModPublicJHHB.StmDeviceRecordDataItem分析仪检查>();
 
             ModPublicJHHB.StmDeviceRecordDataItem分析仪检查 dt = new ModPublicJHHB.StmDeviceRecordDataItem分析仪检查();
-
+            dt.body = new List<ModPublicJHHB.分析仪检查bodyItem>();
             ModPublicJHHB.分析仪检查bodyItem bo = new ModPublicJHHB.分析仪检查bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2827,7 +3140,7 @@ namespace DataUpdate
             bo.opcode = "13";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2856,7 +3169,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-分析仪检查]：", json, 3);
+            FileOpreate.SaveLog(json,"[uploadInspStmDeviceRecord-分析仪检查]：",  3);
             return json;
         }
         string create泄漏检查(object obj)
@@ -2865,11 +3178,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem泄露检查> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem泄露检查>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem泄露检查>();
             List<ModPublicJHHB.StmDeviceRecordDataItem泄露检查> data = new List<ModPublicJHHB.StmDeviceRecordDataItem泄露检查>();
 
             ModPublicJHHB.StmDeviceRecordDataItem泄露检查 dt = new ModPublicJHHB.StmDeviceRecordDataItem泄露检查();
-
+            dt.body = new List<ModPublicJHHB.泄露检查bodyItem>();
             ModPublicJHHB.泄露检查bodyItem bo = new ModPublicJHHB.泄露检查bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2882,7 +3195,7 @@ namespace DataUpdate
             bo.opcode = "14";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2898,7 +3211,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-泄漏检查]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-泄漏检查]：", 3);
             return json;
         }
         string create氧量程检查(object obj)
@@ -2907,11 +3220,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem分析仪氧量程检查> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem分析仪氧量程检查>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem分析仪氧量程检查>();
             List<ModPublicJHHB.StmDeviceRecordDataItem分析仪氧量程检查> data = new List<ModPublicJHHB.StmDeviceRecordDataItem分析仪氧量程检查>();
 
             ModPublicJHHB.StmDeviceRecordDataItem分析仪氧量程检查 dt = new ModPublicJHHB.StmDeviceRecordDataItem分析仪氧量程检查();
-
+            dt.body = new List<ModPublicJHHB.分析仪氧量程检查bodyItem>();
             ModPublicJHHB.分析仪氧量程检查bodyItem bo = new ModPublicJHHB.分析仪氧量程检查bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2924,7 +3237,7 @@ namespace DataUpdate
             bo.opcode = "15";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["ZJSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
@@ -2946,7 +3259,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-氧量程检查]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-氧量程检查]：", 3);
             return json;
         }
         string create流量计检查(object obj)
@@ -2955,11 +3268,11 @@ namespace DataUpdate
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem流量计检查> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem流量计检查>();
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem流量计检查>();
             List<ModPublicJHHB.StmDeviceRecordDataItem流量计检查> data = new List<ModPublicJHHB.StmDeviceRecordDataItem流量计检查>();
 
             ModPublicJHHB.StmDeviceRecordDataItem流量计检查 dt = new ModPublicJHHB.StmDeviceRecordDataItem流量计检查();
-
+            dt.body = new List<ModPublicJHHB.流量计检查bodyItem>();
             ModPublicJHHB.流量计检查bodyItem bo = new ModPublicJHHB.流量计检查bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -2972,11 +3285,11 @@ namespace DataUpdate
             bo.opcode = "17";//    操作项 字符(40)  详见数据字典8.2序24    是
             bo.Operator = ((DataRow)obj)["CZY"].ToString();//操作人 字符(40)  操作人姓名   是
             bo.reporttime = DateTime.Now.ToString("yyyyMMddHHmmss");// 上报时间    日期格式    yyyyMMddHHmmss  是
-            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
+            bo.optime = Convert.ToDateTime(((DataRow)obj)["BDSJ"].ToString()).ToString("yyyyMMddHHmmss");//  自检时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opstime = Convert.ToDateTime(((DataRow)obj)["KSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热开始时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.opetime = Convert.ToDateTime(((DataRow)obj)["JSSJ"].ToString()).ToString("yyyyMMddHHmmss.fff");//  台体预热结束时间    日期格式    yyyyMMddHHmmss.SSS  是
             bo.status = "14";// 设备状态    字符(2)   详见数据字典8.2序9 是
-            bo.result = ((DataRow)obj)["BDJG"].ToString();//  运行结果    字符(1)   1：自检成功；0：自检失败   是
+            bo.result = ((DataRow)obj)["BDJG"].ToString() == "合格" ? "1" : "0";//  运行结果    字符(1)   1：自检成功；0：自检失败   是
             bo.memo = "";//    备注  字符(255)     FALSE
             bo.extn01 = ((DataRow)obj)["DATA4"].ToString();// 低量程标值   数字(10, 2)        是
             bo.extn02 = ((DataRow)obj)["DATA1"].ToString();//  高量程标值 数字(10, 2)		是
@@ -2992,20 +3305,21 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-流量计检查]：", json, 3);
+            FileOpreate.SaveLog( json,"[uploadInspStmDeviceRecord-流量计检查]：", 3);
             return json;
         }
         string create设备时钟同步(object obj)
         {
 
             ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem设备时钟同步数据> model = new ModPublicJHHB.uploadInspStmDeviceRecord<ModPublicJHHB.StmDeviceRecordDataItem设备时钟同步数据>();
+
             model.jkid = "uploadInspStmDeviceRecord";
             model.jksqm = ModPublicJHHB.jksqm;
-
+            model.data = new List<ModPublicJHHB.StmDeviceRecordDataItem设备时钟同步数据>();
             List<ModPublicJHHB.StmDeviceRecordDataItem设备时钟同步数据> data = new List<ModPublicJHHB.StmDeviceRecordDataItem设备时钟同步数据>();
 
             ModPublicJHHB.StmDeviceRecordDataItem设备时钟同步数据 dt = new ModPublicJHHB.StmDeviceRecordDataItem设备时钟同步数据();
-
+            dt.body = new List<ModPublicJHHB.设备时钟同步数据bodyItem>();
             ModPublicJHHB.设备时钟同步数据bodyItem bo = new ModPublicJHHB.设备时钟同步数据bodyItem();
             #region
             bo.id = System.Guid.NewGuid().ToString().Replace("-", "");  //id 检测结果id  字符(32)  检测线尾气检测结果私有唯一标识 是
@@ -3033,7 +3347,7 @@ namespace DataUpdate
             //传入初始化好的对象
             string json = JsonConvert.SerializeObject(model);//.Replace("\\", "");
             json = json.Replace("Operator", "operator");
-            FileOpreate.SaveLog("[uploadInspStmDeviceRecord-流量计检查]：", json, 3);
+            FileOpreate.SaveLog(json,"[uploadInspStmDeviceRecord-设备时间同步]：",  3);
             return json;
         }
     }

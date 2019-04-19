@@ -30,11 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.系统设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.上传自检数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.上传标定数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.开始自动上传ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.关闭自动上传ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.待上传数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.已上传数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.上传失败记录ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,20 +49,27 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tSSL_Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataGridView_BDZJ = new System.Windows.Forms.DataGridView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.上传该条数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.删除该条数据ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView_UploadFailed = new System.Windows.Forms.DataGridView();
             this.timerRefreshFaileData = new System.Windows.Forms.Timer(this.components);
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripProgressBar2 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripProgressBar3 = new System.Windows.Forms.ToolStripProgressBar();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Ready_And_Failed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_AlreadyUpload)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_BDZJ)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_UploadFailed)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.系统设置ToolStripMenuItem,
             this.待上传数据ToolStripMenuItem,
             this.已上传数据ToolStripMenuItem,
             this.上传失败记录ToolStripMenuItem,
@@ -79,46 +81,6 @@
             this.menuStrip1.Size = new System.Drawing.Size(1039, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            // 
-            // 系统设置ToolStripMenuItem
-            // 
-            this.系统设置ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.上传自检数据ToolStripMenuItem,
-            this.上传标定数据ToolStripMenuItem,
-            this.开始自动上传ToolStripMenuItem,
-            this.关闭自动上传ToolStripMenuItem});
-            this.系统设置ToolStripMenuItem.Name = "系统设置ToolStripMenuItem";
-            this.系统设置ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
-            this.系统设置ToolStripMenuItem.Text = "上传设置";
-            // 
-            // 上传自检数据ToolStripMenuItem
-            // 
-            this.上传自检数据ToolStripMenuItem.Name = "上传自检数据ToolStripMenuItem";
-            this.上传自检数据ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.上传自检数据ToolStripMenuItem.Text = "上传自检数据";
-            this.上传自检数据ToolStripMenuItem.Click += new System.EventHandler(this.上传自检数据ToolStripMenuItem_Click);
-            // 
-            // 上传标定数据ToolStripMenuItem
-            // 
-            this.上传标定数据ToolStripMenuItem.Name = "上传标定数据ToolStripMenuItem";
-            this.上传标定数据ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.上传标定数据ToolStripMenuItem.Text = "上传标定数据";
-            this.上传标定数据ToolStripMenuItem.Click += new System.EventHandler(this.上传标定数据ToolStripMenuItem_Click);
-            // 
-            // 开始自动上传ToolStripMenuItem
-            // 
-            this.开始自动上传ToolStripMenuItem.Name = "开始自动上传ToolStripMenuItem";
-            this.开始自动上传ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.开始自动上传ToolStripMenuItem.Text = "开始自动上传";
-            this.开始自动上传ToolStripMenuItem.Click += new System.EventHandler(this.开始自动上传ToolStripMenuItem_Click);
-            // 
-            // 关闭自动上传ToolStripMenuItem
-            // 
-            this.关闭自动上传ToolStripMenuItem.Enabled = false;
-            this.关闭自动上传ToolStripMenuItem.Name = "关闭自动上传ToolStripMenuItem";
-            this.关闭自动上传ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.关闭自动上传ToolStripMenuItem.Text = "关闭自动上传";
-            this.关闭自动上传ToolStripMenuItem.Click += new System.EventHandler(this.关闭自动上传ToolStripMenuItem_Click);
             // 
             // 待上传数据ToolStripMenuItem
             // 
@@ -221,14 +183,15 @@
             this.dataGridView_Ready_And_Failed.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_Ready_And_Failed.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_Ready_And_Failed.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_Ready_And_Failed.Location = new System.Drawing.Point(772, 89);
+            this.dataGridView_Ready_And_Failed.Location = new System.Drawing.Point(510, 29);
             this.dataGridView_Ready_And_Failed.Name = "dataGridView_Ready_And_Failed";
             this.dataGridView_Ready_And_Failed.ReadOnly = true;
             this.dataGridView_Ready_And_Failed.RowHeadersWidth = 30;
             this.dataGridView_Ready_And_Failed.RowTemplate.Height = 23;
             this.dataGridView_Ready_And_Failed.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView_Ready_And_Failed.Size = new System.Drawing.Size(1015, 503);
+            this.dataGridView_Ready_And_Failed.Size = new System.Drawing.Size(149, 507);
             this.dataGridView_Ready_And_Failed.TabIndex = 5;
             this.dataGridView_Ready_And_Failed.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_Ready_And_Failed_CellClick);
             // 
@@ -237,17 +200,18 @@
             this.dataGridView_AlreadyUpload.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_AlreadyUpload.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_AlreadyUpload.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_AlreadyUpload.Location = new System.Drawing.Point(581, 270);
+            this.dataGridView_AlreadyUpload.Location = new System.Drawing.Point(4, 29);
             this.dataGridView_AlreadyUpload.Name = "dataGridView_AlreadyUpload";
             this.dataGridView_AlreadyUpload.RowTemplate.Height = 23;
-            this.dataGridView_AlreadyUpload.Size = new System.Drawing.Size(1015, 503);
+            this.dataGridView_AlreadyUpload.Size = new System.Drawing.Size(206, 507);
             this.dataGridView_AlreadyUpload.TabIndex = 6;
             this.dataGridView_AlreadyUpload.Visible = false;
             // 
             // timerGetWaitCarList
             // 
-            this.timerGetWaitCarList.Interval = 30000;
+            this.timerGetWaitCarList.Interval = 10000;
             this.timerGetWaitCarList.Tick += new System.EventHandler(this.timerGetWaitCarList_Tick);
             // 
             // timerUploadTestData
@@ -257,14 +221,17 @@
             // 
             // timerBdZjUpdate
             // 
-            this.timerBdZjUpdate.Interval = 10000;
+            this.timerBdZjUpdate.Interval = 3000;
             this.timerBdZjUpdate.Tick += new System.EventHandler(this.timerBdZjUpdate_Tick);
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tSSL_Status});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 521);
+            this.tSSL_Status,
+            this.toolStripProgressBar1,
+            this.toolStripProgressBar2,
+            this.toolStripProgressBar3});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 539);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1039, 22);
             this.statusStrip1.TabIndex = 8;
@@ -272,22 +239,49 @@
             // 
             // tSSL_Status
             // 
+            this.tSSL_Status.AutoSize = false;
             this.tSSL_Status.Name = "tSSL_Status";
-            this.tSSL_Status.Size = new System.Drawing.Size(68, 17);
+            this.tSSL_Status.Size = new System.Drawing.Size(600, 17);
             this.tSSL_Status.Text = "运行状态：";
+            this.tSSL_Status.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // dataGridView_BDZJ
             // 
             this.dataGridView_BDZJ.AllowUserToAddRows = false;
             this.dataGridView_BDZJ.AllowUserToDeleteRows = false;
+            this.dataGridView_BDZJ.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_BDZJ.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_BDZJ.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_BDZJ.Location = new System.Drawing.Point(-56, 270);
+            this.dataGridView_BDZJ.ContextMenuStrip = this.contextMenuStrip1;
+            this.dataGridView_BDZJ.Location = new System.Drawing.Point(216, 29);
             this.dataGridView_BDZJ.Name = "dataGridView_BDZJ";
             this.dataGridView_BDZJ.ReadOnly = true;
             this.dataGridView_BDZJ.RowTemplate.Height = 23;
-            this.dataGridView_BDZJ.Size = new System.Drawing.Size(1015, 503);
+            this.dataGridView_BDZJ.Size = new System.Drawing.Size(142, 507);
             this.dataGridView_BDZJ.TabIndex = 9;
             this.dataGridView_BDZJ.Visible = false;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.上传该条数据ToolStripMenuItem,
+            this.删除该条数据ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 48);
+            // 
+            // 上传该条数据ToolStripMenuItem
+            // 
+            this.上传该条数据ToolStripMenuItem.Name = "上传该条数据ToolStripMenuItem";
+            this.上传该条数据ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.上传该条数据ToolStripMenuItem.Text = "上传该条数据";
+            // 
+            // 删除该条数据ToolStripMenuItem
+            // 
+            this.删除该条数据ToolStripMenuItem.Name = "删除该条数据ToolStripMenuItem";
+            this.删除该条数据ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.删除该条数据ToolStripMenuItem.Text = "删除该条数据";
             // 
             // dataGridView_UploadFailed
             // 
@@ -297,14 +291,15 @@
             this.dataGridView_UploadFailed.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView_UploadFailed.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_UploadFailed.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_UploadFailed.Location = new System.Drawing.Point(130, 113);
+            this.dataGridView_UploadFailed.Location = new System.Drawing.Point(364, 29);
             this.dataGridView_UploadFailed.Name = "dataGridView_UploadFailed";
             this.dataGridView_UploadFailed.ReadOnly = true;
             this.dataGridView_UploadFailed.RowHeadersWidth = 30;
             this.dataGridView_UploadFailed.RowTemplate.Height = 23;
             this.dataGridView_UploadFailed.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView_UploadFailed.Size = new System.Drawing.Size(1015, 503);
+            this.dataGridView_UploadFailed.Size = new System.Drawing.Size(140, 507);
             this.dataGridView_UploadFailed.TabIndex = 10;
             // 
             // timerRefreshFaileData
@@ -312,11 +307,44 @@
             this.timerRefreshFaileData.Interval = 3000;
             this.timerRefreshFaileData.Tick += new System.EventHandler(this.timerRefreshFaileData_Tick);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(628, 6);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(96, 16);
+            this.checkBox1.TabIndex = 11;
+            this.checkBox1.Text = "自动刷新上传";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Maximum = 10;
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
+            this.toolStripProgressBar1.Step = 1;
+            // 
+            // toolStripProgressBar2
+            // 
+            this.toolStripProgressBar2.Maximum = 10;
+            this.toolStripProgressBar2.Name = "toolStripProgressBar2";
+            this.toolStripProgressBar2.Size = new System.Drawing.Size(100, 16);
+            this.toolStripProgressBar2.Step = 1;
+            // 
+            // toolStripProgressBar3
+            // 
+            this.toolStripProgressBar3.Maximum = 10;
+            this.toolStripProgressBar3.Name = "toolStripProgressBar3";
+            this.toolStripProgressBar3.Size = new System.Drawing.Size(100, 16);
+            this.toolStripProgressBar3.Step = 1;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1039, 543);
+            this.ClientSize = new System.Drawing.Size(1039, 561);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.dataGridView_UploadFailed);
             this.Controls.Add(this.dataGridView_BDZJ);
             this.Controls.Add(this.statusStrip1);
@@ -329,7 +357,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FrmMain";
-            this.Text = "环保检测数据上传 V1.0";
+            this.Text = "金华保检测数据上传 V1.0";
             this.Load += new System.EventHandler(this.FrmMain_Load);
             this.Resize += new System.EventHandler(this.FrmMain_Resize);
             this.menuStrip1.ResumeLayout(false);
@@ -339,6 +367,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_BDZJ)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_UploadFailed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -348,7 +377,6 @@
         #endregion
 
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem 系统设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 待上传数据ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 已上传数据ToolStripMenuItem;
         private System.Windows.Forms.Label label1;
@@ -359,10 +387,6 @@
         private System.Windows.Forms.DataGridView dataGridView_AlreadyUpload;
         private System.Windows.Forms.Timer timerGetWaitCarList;
         private System.Windows.Forms.Timer timerUploadTestData;
-        private System.Windows.Forms.ToolStripMenuItem 开始自动上传ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 关闭自动上传ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 上传自检数据ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 上传标定数据ToolStripMenuItem;
         private System.Windows.Forms.Timer timerBdZjUpdate;
         private System.Windows.Forms.ToolStripMenuItem 删除上传失败记录ToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -374,6 +398,13 @@
         private System.Windows.Forms.ToolStripMenuItem 上传失败记录ToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridView_UploadFailed;
         private System.Windows.Forms.Timer timerRefreshFaileData;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem 上传该条数据ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 删除该条数据ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar2;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar3;
     }
 }
 
