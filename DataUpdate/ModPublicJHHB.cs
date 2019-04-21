@@ -16,7 +16,7 @@ namespace DataUpdate
         # region  检测信息
         public static string inspregid;   //检测登录id
         public static string testingid;   //车辆尾气检测结果id
-        public static string odbresultid; //车辆ODB检测结果id
+        public static string obdresultid; //车辆OBD检测结果id
         public static string NetBGid;     //检测报告id
         #endregion
 
@@ -100,25 +100,25 @@ namespace DataUpdate
         //    public string Brand { get; set; }//Brand   品牌/型号
         //    public string Gear { get; set; }//Gear    变速器型式 详见数据字典8.2 序8
         //    public string AirIn { get; set; }//AirIn   进气方式 详见数据字典8.2 序6
-        //    public string isODB { get; set; }//isODB   是否有OBD
+        //    public string isOBD { get; set; }//isOBD   是否有OBD
         //    public string VehicleDesc { get; set; }//VehicleDesc 特殊车况说明	
         //}
 
         #endregion
 
-        #region   7.1.2 ODB检测结果信息调取（odb检测结果id获取）
-        public class downInspODBResultInfo
+        #region   7.1.2 OBD检测结果信息调取（obd检测结果id获取）
+        public class downInspOBDResultInfo
         {
             public string jkid { get; set; }  //1	jkid 接口标识    是 接口标识，用于区分同一接口类型。
             public string jksqm { get; set; } //2	jksqm 验证码 是 验证码由8位长度数据组成。
             public string inspregid { get; set; } //3	inspregid 检测登录id  是 由环保中心返回的检测登录唯一id
         }
 
-        //返回odb检测结果id
-        public class GetODBResultInfo
+        //返回obd检测结果id
+        public class GetOBDResultInfo
         {
             public string inspregid { get; set; }//inspregid 车辆登记id
-            public string odbresultid { get; set; }//odbresultid 车辆ODB检测结果id
+            public string obdresultid { get; set; }//obdresultid 车辆OBD检测结果id
             public string TsNo { get; set; }//TsNo 检测机构编号
         }
 
@@ -132,7 +132,7 @@ namespace DataUpdate
            public string inspregid { get; set; }//3	inspregid 检测登录id  是 由环保中心返回的检测登录唯一id
         }
 
-        //返回odb检测结果id
+        //返回obd检测结果id
         public class GetTestingResultInfo
         {
             public string inspregid { get; set; }//inspregid 车辆登记id
@@ -175,22 +175,22 @@ namespace DataUpdate
 
         #endregion
 
-        #region   7.2.1.1 ODB检测结果信息接口
-        public class uploadInspResultODB
+        #region   7.2.1.1 OBD检测结果信息接口
+        public class uploadInspResultOBD
         {
             public string jkid { get; set; } //1	jkid 接口标识    是 接口标识，用于区分同一接口类型。
             public string jksqm { get; set; } //2	jksqm 验证码 是 验证码由8位长度数据组成。
-           public List<ResultODBDataItem> data { get; set; }
+           public List<ResultOBDDataItem> data { get; set; }
         }
 
-         public class ResultODBDataItem
+         public class ResultOBDDataItem
         {
-            public List<ResultODBbodyItem> body { get; set; }
+            public List<ResultOBDbodyItem> body { get; set; }
         }
         
-        public class ResultODBbodyItem
+        public class ResultOBDbodyItem
         {
-            public string id { get; set; } //id Odb检测记录id   字符(32)  检测线odb检测结果私有唯一标识 是
+            public string id { get; set; } //id Odb检测记录id   字符(32)  检测线obd检测结果私有唯一标识 是
             public string TsNo { get; set; } //TsNo 检测机构编号  字符(16)  格式详见3定义部分 是
             public string inspregid { get; set; } //inspregid 检验登录ID  字符(32)  由环保局返回的检测登录唯一标识 是
             public string VIN { get; set; } //VIN 车辆识别代号  字符(32)  车辆识别代号VIN（须完整上报）	是
@@ -221,41 +221,42 @@ namespace DataUpdate
         }
  
 
-        // ODB检测信息上报返回
-        public class GetResultODB
+        // OBD检测信息上报返回
+        public class GetResultOBD
         {
             public string code { get; set; }  //code 回执状态代码  参考 6.2.4	 code定义
             public string message { get; set; }  //message 回执状态代码说明 参考 6.2.4	 code定义
             public string responseTime { get; set; }  //responseTime    回执时间
-            public string odbresultid { get; set; }  //odbresultid    回执ODB检测结果id
+            public string obdresultid { get; set; }  //obdresultid    回执OBD检测结果id
             public string inspregid { get; set; }  //inspregid       回执车辆登录id 同 7.1.1 返回值
-            //说明：odbresultid --ODB检测结果id, 上传该检测车辆ODB检测过程数据必须封装该字段内容。inspregid--检测登录id, 上传与该检测车辆相关检测数据必须封装该字段内容。"//回执内容说明
+            //说明：obdresultid --OBD检测结果id, 上传该检测车辆OBD检测过程数据必须封装该字段内容。inspregid--检测登录id, 上传与该检测车辆相关检测数据必须封装该字段内容。"//回执内容说明
         }
 
         #endregion
 
-        #region   7.2.1.2 ODB检测过程信息接口
+        #region   7.2.1.2 OBD检测过程信息接口
 
-        #region   汽油ODB检测过程
-        public class uploadInspProcessODBQY
+        #region   汽油OBD检测过程
+        public class uploadInspProcessOBDQY
         {
             public string jkid { get; set; } //1	jkid 接口标识    是 接口标识，用于区分同一接口类型。
             public string jksqm { get; set; } //2	jksqm 验证码 是 验证码由8位长度数据组成。
-            public List<ProcessODBDataItemQY> data { get; set; }
+            public List<ProcessOBDDataItemQY> data { get; set; }
         }
 
-        public class ProcessODBDataItemQY
+        public class ProcessOBDDataItemQY
         {
-            public List<ProcessODBbodyQYItem> body { get; set; }
+            public List<ProcessOBDbodyQYItem> body { get; set; }
         }
 
-        public struct ProcessODBbodyQYItem
+        public struct ProcessOBDbodyQYItem
         {
-            public string id { get; set; } //id Odb检测过程记录id 字符(32)  检测站检测odb检测过程私有唯一标识 是
+            public string id { get; set; } //id Odb检测过程记录id 字符(32)  检测站检测obd检测过程私有唯一标识 是
             public string inspregid { get; set; } //inspregid 检验登录ID  字符(32)  由环保局返回的检测登录唯一标识 是
-            public string odbresultid { get; set; } //odbresultid Odb检测结果id   字符(32)  由环保局返回的Odb检测结果唯一标识
+            public string obdresultid { get; set; } //obdresultid Odb检测结果id   字符(32)  由环保局返回的Odb检测结果唯一标识
             public string tsno { get; set; }  //tsno    检测机构编号 字符(16)  格式详见3定义部分 是
             public string serialno { get; set; }  //serialno 采样时序    数值(4)   逐秒，从1开始，每条递增1 是
+            public string optime { set; get; }
             public string throttleOpen { get; set; }  //throttleOpen 节气门绝对开度 数值(12,4)    汽油车（%）	
             public string loadingValue { get; set; }  //loadingValue 计算负荷值   数值(12,4)    汽油车（%）	
             public string qyzhq { get; set; }  //qyzhq 前氧传感器信号 数值(12,4)    （mV/mA）	
@@ -267,24 +268,24 @@ namespace DataUpdate
         }
         #endregion
 
-        # region 柴油ODB检测过程
-        public class uploadInspProcessODBCY
+        # region 柴油OBD检测过程
+        public class uploadInspProcessOBDCY
         {
             public string jkid { get; set; } //1	jkid 接口标识    是 接口标识，用于区分同一接口类型。
             public string jksqm { get; set; } //2	jksqm 验证码 是 验证码由8位长度数据组成。
-            public List<ProcessODBDataItemCY> data { get; set; }
+            public List<ProcessOBDDataItemCY> data { get; set; }
         }
 
-        public class ProcessODBDataItemCY
+        public class ProcessOBDDataItemCY
         {
-            public List<ProcessODBbodyCYItem> body { get; set; }
+            public List<ProcessOBDbodyCYItem> body { get; set; }
         }
                
-        public struct ProcessODBbodyCYItem
+        public struct ProcessOBDbodyCYItem
         {
-            public string id { get; set; }  //id Odb检测过程记录id 字符(32)  检测线检测odb检测过程私有唯一标识 是
+            public string id { get; set; }  //id Odb检测过程记录id 字符(32)  检测线检测obd检测过程私有唯一标识 是
             public string inspregid { get; set; }  //inspregid 检验登录ID  字符(32)  由环保局返回的检测登录唯一标识 是
-            public string odbresultid { get; set; }  //odbresultid Odb检测结果id   字符(32)  由环保局返回的Odb检测结果唯一标识
+            public string obdresultid { get; set; }  //obdresultid Odb检测结果id   字符(32)  由环保局返回的Odb检测结果唯一标识
             public string tsno { get; set; }  //tsno    检测机构编号 字符(16)  格式详见3定义部分 是
             public string serialno { get; set; }  //serialno 采样时序    数值(4)   逐秒，从1开始，每条递增1 是
             public string optime { get; set; }  // optime 采样时间    时间类型 yyyyMMddHHmmss
@@ -306,24 +307,24 @@ namespace DataUpdate
 
         #endregion
 
-        #region   7.2.1.3 ODB检测IUPR 相关信息接口
-        public class uploadInspIuprODB
+        #region   7.2.1.3 OBD检测IUPR 相关信息接口
+        public class uploadInspIuprOBD
         {
             public string jkid { get; set; } //1	jkid 接口标识    是 接口标识，用于区分同一接口类型。
             public string jksqm { get; set; } //2	jksqm 验证码 是 验证码由8位长度数据组成。
-            public List<IuprODBDataItem> data { get; set; }
+            public List<IuprOBDDataItem> data { get; set; }
         }
 
-        public class IuprODBDataItem
+        public class IuprOBDDataItem
         {
-            public List<IuprODBbodyItem> body { get; set; }
+            public List<IuprOBDbodyItem> body { get; set; }
         }
 
-        public struct IuprODBbodyItem
+        public struct IuprOBDbodyItem
         {
-            public string id { get; set; } //id Odb检测过程记录id 字符(32)  检测线检测odb检测过程私有唯一标识 是
+            public string id { get; set; } //id Odb检测过程记录id 字符(32)  检测线检测obd检测过程私有唯一标识 是
             public string inspregid { get; set; } //inspregid 检验登录ID  字符(32)  由环保局返回的检测登录唯一标识 是
-            public string odbresultid { get; set; } //odbresultid Odb检测结果id   字符(32)  由环保局返回的Odb检测结果唯一标识 是
+            public string obdresultid { get; set; } //obdresultid Odb检测结果id   字符(32)  由环保局返回的Odb检测结果唯一标识 是
             public string tsno { get; set; } //tsno 检测机构编号  字符(16)  格式详见3定义部分 是
             public string projectcode { get; set; } //projectcode 监测项目代码  字符(32)      是
             public string projectname { get; set; } //projectname 监测项目名称 字符(32)      是
@@ -539,6 +540,12 @@ namespace DataUpdate
             public string CO { get; set; } //CO  CO排放结果 数值(12,4)    （g/km）	是
             public string NOx { get; set; } //NOx NOX排放结果 数值(12,4)    （g/km）	是
             public string HCNOx { get; set; } //HCNOx   HC+NOX排放结果 数值(12,4)    （g/km）	FALSE
+            public string Lambda { set; get; }
+            public string LambdaUp { get; set; } //过量空气系数上限值   数值(12,4)        是
+            public string LambdaDown { get; set; } // 过量空气系数下限值 数值(12,4)        是
+
+            public string LambdaJudge { get; set; } //过量空气系数判定    数值(1)       是
+
             public string HCLimit { get; set; } //HCLimit HC排放限值 数值(12,4)    （g/km）	是
             public string COLimit { get; set; } //COLimit CO排放限值 数值(12,4)    （g/km）	是
             public string NOxLimit { get; set; } //NOxLimit    NOX排放限值 数值(12,4)    （g/km）	是
@@ -2921,7 +2928,7 @@ namespace DataUpdate
         //	-20025	检测设备不存在
         //	-20026	上传车辆外观检测图片失败，appearanceid 或 inspregid有误
         //	-20027	上传车辆外观检测图片失败，图片picType不是规定类型
-        //	-20028	odbresultid、inspregid字段与车辆ODB检测结果的字段信息不匹配，请检查相关字段是否有误！
+        //	-20028	obdresultid、inspregid字段与车辆OBD检测结果的字段信息不匹配，请检查相关字段是否有误！
         //	-40000	上传文件为空
         //	-40001	不允许上传多个文件
         //	-40002	文件类型不符合规定格式
@@ -2942,6 +2949,59 @@ namespace DataUpdate
             public string jkid { set; get; }
             public string jksqm { set; get; }
             public List<uploadAckResult> result { set; get; }
+        }
+
+        #endregion
+        #region 检测报告单信息返回
+        public class uploadTestingCheck
+        {
+            public string jkid { set; get; }
+            public string jksqm { set; get; }
+            public List<uploadAckResult> result { set; get; }
+        }
+        public class uploadTestingCheckResult
+        {
+            public List<uploadTestingBody> body;
+        }
+        public class uploadTestingBody
+        {
+            public uploadTestingBodyCheck testingCheck;
+            public uploadTestingBodyResult testingResult;
+        }
+        public class uploadTestingBodyCheck
+        {
+            public string testingid;
+            public string testno;
+            public string tsno;
+        }
+        public class uploadTestingBodyResult
+        {
+            public string testtype;
+            public string testJudge;//0,不合格，1，合格
+            public string value01;
+            public string value02;
+            public string value03;
+            public string value04;
+            public string value05;
+            public string value06;
+            public string limit01;
+            public string limit02;
+            public string limit03;
+            public string limit04;
+            public string limit05;
+            public string limit06;
+            public string judge01;
+            public string judge02;
+            public string judge03;
+            public string judge04;
+            public string judge05;
+            public string judge06;
+            public string parame01;
+            public string parame02;
+            public string parame03;
+            public string parame04;
+            public string parame05;
+            public string parame06;
         }
         #endregion
         public class uploadReg

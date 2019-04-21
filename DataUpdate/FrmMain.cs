@@ -26,7 +26,7 @@ namespace DataUpdate
         private DataTable dt_ZjBdUpload = null;
 
         public static ConnForSQL conforsql = new ConnForSQL();
-        private DBControl carinfodb = new DBControl();//定义数据库操作
+        private DBControl carinfobd = new DBControl();//定义数据库操作
 
         private Interface InterfaceUpload = null;//定义联网操作
         private interfaceJinhua interfaceUploadJh = null;
@@ -84,6 +84,40 @@ namespace DataUpdate
             }
             else
                 FileOpreate.SaveLog(hstb["CLHP"] + "更新车辆信息表失败，无法加入待检列表", "DBError2", 1);
+        }
+        private bool updateTestingID(string clid,string testingid)
+        {
+            Hashtable hstb = new Hashtable();
+            hstb.Add("YWLSH", testingid);
+
+            if (conforsql.InsertOrUpdate("已检车辆信息", " where CLID='" + clid + "'", hstb) > 0)
+            {
+                FileOpreate.SaveLog(clid + "已检车辆信息 testingid[YWLSH]更新成功", "DBWrite1", 1);//3、更新待检列表信息
+                return true;
+            }
+            else
+            {
+                FileOpreate.SaveLog(clid + "已检车辆信息 testingid[YWLSH]更新失败", "DBError2", 1);
+                return false;
+            }
+
+        }
+        private bool updateJCBGBH(string clid, string jcbgbh)
+        {
+            Hashtable hstb = new Hashtable();
+            hstb.Add("LSH", jcbgbh);
+
+            if (conforsql.InsertOrUpdate("已检车辆信息", " where CLID='" + clid + "'", hstb) > 0)
+            {
+                FileOpreate.SaveLog(clid + "已检车辆信息 检测报告编号[LSH]更新成功", "DBWrite1", 1);//3、更新待检列表信息
+                return true;
+            }
+            else
+            {
+                FileOpreate.SaveLog(clid + "已检车辆信息 检测报告编号[LSH]更新失败", "DBError2", 1);
+                return false;
+            }
+
         }
         private void FrmMain_Load(object sender, EventArgs e)
         {
@@ -347,8 +381,8 @@ namespace DataUpdate
                 DateTime begin_date = FileOpreate.GetClearTime();
                 if (DateTime.Compare(DateTime.Now.Date, begin_date.Date) > 0)//软件上次启动时间为今天之前时清理待检列表并保存第一次启动时间
                 {
-                    carinfodb.clearCarWaitList();
-                    carinfodb.clearCarTestStatus();
+                    carinfobd.clearCarWaitList();
+                    carinfobd.clearCarTestStatus();
                     FileOpreate.SaveClearTime(System.DateTime.Now.ToString("yyyy-MM-dd"));
                 }
             }
@@ -420,7 +454,7 @@ namespace DataUpdate
                 string jylsh = dt_ReadyUpload.Rows[Choosedindex]["检验流水号"].ToString();
                 string jycs = dt_ReadyUpload.Rows[Choosedindex]["检验次数"].ToString();
                 string lineid= dt_ReadyUpload.Rows[Choosedindex]["线号"].ToString();
-                DataRow CarTestStatusRow = carinfodb.getCarTestStatusByLsh(jylsh, jycs);
+                DataRow CarTestStatusRow = carinfobd.getCarTestStatusByLsh(jylsh, jycs);
                 
                 CarTestStatusRow["HPZL"] = InterfaceUpload.get_hpzl_code[CarTestStatusRow["HPZL"].ToString()];
                 if (CarTestStatusRow != null)
@@ -434,7 +468,7 @@ namespace DataUpdate
                         return;
                     //正常开始之后关闭检查软件导致ZT与YCLZT相同的还原
                     if (tempZT == "1" && tempYCLZT == "1")
-                        carinfodb.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
+                        carinfobd.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
                     try
                     {
                         switch (CarTestStatusRow["JCFF"].ToString())
@@ -444,7 +478,7 @@ namespace DataUpdate
                                 {
                                     Thread AsmUploadThread = new Thread(new ParameterizedThreadStart(UploadASMData));//新建一个过程的上传线程
                                     AsmUploadThread.Start(CarTestStatusRow);//开始上传线程
-                                    //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                    //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                     ShowStatus(jylsh, jycs, "备注", "ASM手动上传中...");
                                     FileOpreate.SaveLog("ASM数据手动上传线程已开始", "检测数据上传", 1);
                                 }
@@ -454,7 +488,7 @@ namespace DataUpdate
                                 {
                                     Thread VmasUploadThread = new Thread(new ParameterizedThreadStart(UploadVMASData));
                                     VmasUploadThread.Start(CarTestStatusRow);
-                                    //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                    //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                     ShowStatus(jylsh, jycs, "备注", "VMAS手动上传中...");
                                     FileOpreate.SaveLog("VMAS数据手动上传线程已开始", "检测数据上传", 1);
                                 }
@@ -464,7 +498,7 @@ namespace DataUpdate
                                 {
                                     Thread SdsUploadThread = new Thread(new ParameterizedThreadStart(UploadSDSData));
                                     SdsUploadThread.Start(CarTestStatusRow);
-                                    //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                    //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                     ShowStatus(jylsh, jycs, "备注", "SDS手动上传中...");
                                     FileOpreate.SaveLog("SDS数据手动上传线程已开始", "检测数据上传", 1);
                                 }
@@ -474,7 +508,7 @@ namespace DataUpdate
                                 {
                                     Thread SdsMUploadThread = new Thread(new ParameterizedThreadStart(UploadSDSMData));
                                     SdsMUploadThread.Start(CarTestStatusRow);
-                                    //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                    //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                     ShowStatus(jylsh, jycs, "备注", "SDSM手动上传中...");
                                     FileOpreate.SaveLog("SDSM数据手动上传线程已开始", "检测数据上传", 1);
                                 }
@@ -484,7 +518,7 @@ namespace DataUpdate
                                 {
                                     Thread JzjsUploadThread = new Thread(new ParameterizedThreadStart(UploadJZJSData));
                                     JzjsUploadThread.Start(CarTestStatusRow);
-                                    //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                    //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                     ShowStatus(jylsh, jycs, "备注", "JZJS手动上传中...");
                                     FileOpreate.SaveLog("JZJS数据手动上传线程已开始", "检测数据上传", 1);
                                 }
@@ -494,7 +528,7 @@ namespace DataUpdate
                                 {
                                     Thread ZyjsUploadThread = new Thread(new ParameterizedThreadStart(UploadZYJSData));
                                     ZyjsUploadThread.Start(CarTestStatusRow);
-                                    //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                    //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                     ShowStatus(jylsh, jycs, "备注", "ZYJS手动上传中...");
                                     FileOpreate.SaveLog("ZYJS数据手动上传线程已开始", "检测数据上传", 1);
                                 }
@@ -527,11 +561,11 @@ namespace DataUpdate
 
                     //待检列表、检测状态表、上传软件界面都删一次操作
                     string strDeleteResult = "状态：流水号" + jylsh + "，检验次数" + jycs;
-                    if (carinfodb.deleteCarInWaitlist(jylsh, jycs))//删除本地待检列表
+                    if (carinfobd.deleteCarInWaitlist(jylsh, jycs))//删除本地待检列表
                         strDeleteResult += "本地待检列表删除成功|";
                     else
                         strDeleteResult += "本地待检列表删除失败|";
-                    if (carinfodb.DeleteCarTestStatus(jylsh, jycs))//删除车辆检测状态表
+                    if (carinfobd.DeleteCarTestStatus(jylsh, jycs))//删除车辆检测状态表
                         strDeleteResult += "本地车辆检测状态表删除成功|";
                     else
                         strDeleteResult += "本地车辆检测状态表删除失败|";
@@ -646,7 +680,7 @@ namespace DataUpdate
         {
             try
             {
-                DataTable SelfCheckDataTable = carinfodb.getSelfCheckData(maxUploadTimes);
+                DataTable SelfCheckDataTable = carinfobd.getSelfCheckData(maxUploadTimes);
                 if (SelfCheckDataTable != null && SelfCheckDataTable.Rows.Count > 0)
                 {
                     FileOpreate.SaveLog("手动开始进行自检数据上传，总共有：" + SelfCheckDataTable.Rows.Count + "行数据！", "自检数据上传", 1);
@@ -672,7 +706,7 @@ namespace DataUpdate
         {
             try
             {
-                DataTable BDDataTable = carinfodb.getBDData(maxUploadTimes);//获取当天未上传标定数据
+                DataTable BDDataTable = carinfobd.getBDData(maxUploadTimes);//获取当天未上传标定数据
                 if (BDDataTable != null && BDDataTable.Rows.Count > 0)
                 {
                     FileOpreate.SaveLog("手动开始进行标定数据上传，总共有：" + BDDataTable.Rows.Count + "行数据！", "标定数据上传", 1);
@@ -703,9 +737,9 @@ namespace DataUpdate
                 timerUploadBdzjCount = 0;
             toolStripProgressBar3.Value = timerUploadBdzjCount;
             //= 0, timerUploadBdzjCount = 0,timerGetWaitListCount = 0;
-            DataTable SelfCheckDataTable = carinfodb.getSelfCheckData(maxUploadTimes);
+            DataTable SelfCheckDataTable = carinfobd.getSelfCheckData(maxUploadTimes);
 
-            DataTable BDDataTable = carinfodb.getBDData(maxUploadTimes);//获取当天未上传标定数据
+            DataTable BDDataTable = carinfobd.getBDData(maxUploadTimes);//获取当天未上传标定数据
             dt_ZjBdUpload.Clear();
             if (SelfCheckDataTable != null && SelfCheckDataTable.Rows.Count > 0)
             {
@@ -798,8 +832,8 @@ namespace DataUpdate
                 if (_clearcarlistat500 && DateTime.Now.CompareTo(Convert.ToDateTime("05:30")) < 0 && DateTime.Now.CompareTo(Convert.ToDateTime("05:00")) > 0)
                 {
                     //在5:00到5:30之间，进行一次清理，并将_clearcarlistat500状态置为fales，保存清理时间
-                    carinfodb.clearCarWaitList();
-                    carinfodb.clearCarTestStatus();
+                    carinfobd.clearCarWaitList();
+                    carinfobd.clearCarTestStatus();
                     _clearcarlistat500 = false;
                     FileOpreate.SaveClearTime(System.DateTime.Now.ToString("yyyy-MM-dd"));
 
@@ -839,7 +873,7 @@ namespace DataUpdate
                 }
                 if (dtWaitCarListInNet.Rows.Count > 0)
                 {
-                    DataTable dtWaitCarList = carinfodb.getCarInWaitList("Y");//获取待检列表中的联网待检车辆信息
+                    DataTable dtWaitCarList = carinfobd.getCarInWaitList("Y");//获取待检列表中的联网待检车辆信息
                     if (dtWaitCarList == null)
                     {
                         FileOpreate.SaveLog("获取错误,原因：" + error_info1, "获取本地待检列表", 1);
@@ -861,11 +895,11 @@ namespace DataUpdate
                                 try
                                 {
                                     string strDeleteResult = "状态：流水号" + check_jylsh + "，检验次数" + check_jycs;
-                                    if (carinfodb.deleteCarInWaitlist(check_jylsh, check_jycs))//删除本地待检列表
+                                    if (carinfobd.deleteCarInWaitlist(check_jylsh, check_jycs))//删除本地待检列表
                                         strDeleteResult += "本地待检列表删除成功|";
                                     else
                                         strDeleteResult += "本地待检列表删除失败|";
-                                    if (carinfodb.DeleteCarTestStatus(check_jylsh, check_jycs))//删除车辆检测状态表
+                                    if (carinfobd.DeleteCarTestStatus(check_jylsh, check_jycs))//删除车辆检测状态表
                                         strDeleteResult += "本地车辆检测状态表删除成功|";
                                     else
                                         strDeleteResult += "本地车辆检测状态表删除失败|";
@@ -950,7 +984,7 @@ namespace DataUpdate
                                     if (conforsql.InsertOrUpdate("车辆信息"," where CLHP='"+ dtWaitCarListInNet.Rows[i]["hphm"].ToString()+"' and CPYS='"+ dtWaitCarListInNet.Rows[i]["hpys"].ToString() + "'", hstb) > 0)
                                     {
                                         FileOpreate.SaveLog(hphm + "车辆信息更新成功", "DBWrite1", 1);//3、更新待检列表信息
-                                        if (carinfodb.addCarToWaitList(hphm + "T" + DateTime.Now.ToString("yyyyMMddHHmmss"), jylsh, jycs, hphm, dtWaitCarListInNet.Rows[i]["hpys"].ToString(), dtWaitCarListInNet.Rows[i]["hpzl"].ToString(), dtWaitCarListInNet.Rows[i]["ljxslc"].ToString(), jcff, dtWaitCarListInNet.Rows[i]["jczbh"].ToString(), dtWaitCarListInNet.Rows[i]["dlsj"].ToString(), ""))
+                                        if (carinfobd.addCarToWaitList(hphm + "T" + DateTime.Now.ToString("yyyyMMddHHmmss"), jylsh, jycs, hphm, dtWaitCarListInNet.Rows[i]["hpys"].ToString(), dtWaitCarListInNet.Rows[i]["hpzl"].ToString(), dtWaitCarListInNet.Rows[i]["ljxslc"].ToString(), jcff, dtWaitCarListInNet.Rows[i]["jczbh"].ToString(), dtWaitCarListInNet.Rows[i]["dlsj"].ToString(), ""))
                                             FileOpreate.SaveLog(hphm + "/" + jcff + "方法待检车辆信息更新成功", "DBWrite2", 1);
                                         else
                                             FileOpreate.SaveLog(hphm + "/" + jcff + "方法待检车辆信息更新失败", "DBError1", 1);
@@ -995,7 +1029,7 @@ namespace DataUpdate
                 toolStripProgressBar1.Value = timerUploadTestDataCount;
                 //= 0, timerUploadBdzjCount = 0,timerGetWaitListCount = 0;
                 //tsl_inf.Text = "上次刷新：" + DateTime.Now.ToString();
-                DataTable CarTestStatusTable = carinfodb.getCarTestStatus();//获取车辆检测状态表
+                DataTable CarTestStatusTable = carinfobd.getCarTestStatus();//获取车辆检测状态表
                 #region 显示 
                 dt_ReadyUpload.Clear();
                 if (CarTestStatusTable != null && CarTestStatusTable.Rows.Count > 0)
@@ -1048,7 +1082,7 @@ namespace DataUpdate
                                             continue;
                                         AsmUploadThread = new Thread(new ParameterizedThreadStart(UploadASMData));//新建一个过程的上传线程
                                         AsmUploadThread.Start(dt_jczt);//开始上传线程
-                                       // carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);//临时更新已处理状态到当前状态
+                                       // carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);//临时更新已处理状态到当前状态
                                         //ShowStatus(jylsh, jycs, "备注", "ASM数据自动上传中...");
                                         FileOpreate.SaveLog("jylsh:" + jylsh + "|ASM数据自动上传线程已开始", "检测数据上传", 1);
                                     }
@@ -1060,7 +1094,7 @@ namespace DataUpdate
                                             continue;
                                         VmasUploadThread = new Thread(new ParameterizedThreadStart(UploadVMASData));
                                         VmasUploadThread.Start(dt_jczt);
-                                        //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                        //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                         //ShowStatus(jylsh, jycs, "备注", "VMAS数据自动上传中...");
                                         FileOpreate.SaveLog("VMAS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
@@ -1072,7 +1106,7 @@ namespace DataUpdate
                                             continue;
                                         SdsUploadThread = new Thread(new ParameterizedThreadStart(UploadSDSData));
                                         SdsUploadThread.Start(dt_jczt);
-                                        //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                        //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                        // ShowStatus(jylsh, jycs, "备注", "SDS数据自动上传中...");
                                         FileOpreate.SaveLog("jylsh:"+ jylsh+"|SDS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
@@ -1084,7 +1118,7 @@ namespace DataUpdate
                                             continue;
                                         SdsMUploadThread = new Thread(new ParameterizedThreadStart(UploadSDSMData));
                                         SdsMUploadThread.Start(dt_jczt);
-                                        ////carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                        ////carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                        // ShowStatus(jylsh, jycs, "备注", "SDSM数据自动上传中...");
                                         FileOpreate.SaveLog("SDSM数据自动上传线程已开始", "检测数据上传", 1);
                                     }
@@ -1096,7 +1130,7 @@ namespace DataUpdate
                                             continue;
                                         JzjsUploadThread = new Thread(new ParameterizedThreadStart(UploadJZJSData));
                                         JzjsUploadThread.Start(dt_jczt);
-                                        //carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                        //carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                         ShowStatus(jylsh, jycs, "备注", "JZJS数据自动上传中...");
                                         FileOpreate.SaveLog("JZJS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
@@ -1108,7 +1142,7 @@ namespace DataUpdate
                                             continue;
                                         ZyjsUploadThread = new Thread(new ParameterizedThreadStart(UploadZYJSData));
                                         ZyjsUploadThread.Start(dt_jczt);
-                                       // carinfodb.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
+                                       // carinfobd.UpdateCarTestStatusYCLZT(tempZT, jylsh, jycs);
                                        // ShowStatus(jylsh, jycs, "备注", "ZYJS数据自动上传中...");
                                         FileOpreate.SaveLog("ZYJS数据自动上传线程已开始", "检测数据上传", 1);
                                     }
@@ -1146,7 +1180,7 @@ namespace DataUpdate
 
                 if (dt_test_status.Rows.Count <= 0)
                 {
-                    //carinfodb.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
+                    //carinfobd.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
                     FileOpreate.SaveLog("ASM上传线程传入数据为空" + obj.ToString(), "ASM上传线程执行失败", 1);
                     return;
                 }
@@ -1164,10 +1198,10 @@ namespace DataUpdate
                         string error_info = "";
                         if (UpdateProjectStart(dt_test_status.Rows[0], out error_info))
                         {
-                            if (carinfodb.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
+                            if (carinfobd.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
                             {
                                 //yclzt = "2";
-                                carinfodb.UpdateCarTestStatusYCLZT("2", jylsh, jycs);//将该条记录置为上传失败记录
+                                carinfobd.UpdateCarTestStatusYCLZT("2", jylsh, jycs);//将该条记录置为上传失败记录
                                 FileOpreate.SaveLog("流水号：" + jylsh + "项目开始发送成功", "ASM上传过程", 1);
                             }
                             else
@@ -1175,8 +1209,8 @@ namespace DataUpdate
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
-                            carinfodb.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
+                            carinfobd.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "不允许开始，原因：" + error_info, "ASM上传过程", 1);
                             return;
                         }
@@ -1186,7 +1220,7 @@ namespace DataUpdate
                         //发21照片，更新YCLZT到21
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "21"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("21", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("21", jylsh, jycs);
                             //yclzt = "21";
                             FileOpreate.SaveLog("流水号：" + jylsh + "21发送成功", "ASM上传过程", 1);
                         }
@@ -1198,7 +1232,7 @@ namespace DataUpdate
                         //发22，更新YCLZT到22
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "22"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("22", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("22", jylsh, jycs);
                             //yclzt = "22";
                             FileOpreate.SaveLog("流水号：" + jylsh + "22发送成功", "ASM上传过程", 1);
                         }
@@ -1210,7 +1244,7 @@ namespace DataUpdate
                         //发23，更新YCLZT到23
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "23"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("23", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("23", jylsh, jycs);
                             //yclzt = "23";
                             FileOpreate.SaveLog("流水号：" + jylsh + "23发送成功", "ASM上传过程", 1);
                         }
@@ -1222,7 +1256,7 @@ namespace DataUpdate
                         //发24，更新YCLZT到24
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "24"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("24", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("24", jylsh, jycs);
                             //yclzt = "24";
                             FileOpreate.SaveLog("流水号：" + jylsh + "24发送成功", "ASM上传过程", 1);
                         }
@@ -1250,18 +1284,18 @@ namespace DataUpdate
                                 dr["检测方法"] = dt_test_status.Rows[0]["JCFF"].ToString();
                                 dr["上传成功时间"] = System.DateTime.Now.ToString();
                                 dt_AlreadyUpload.Rows.Add(dr);
-                                carinfodb.DeleteCarTestStatus(jylsh, jycs);
-                                carinfodb.deleteCarInWaitlist(jylsh, jycs);
+                                carinfobd.DeleteCarTestStatus(jylsh, jycs);
+                                carinfobd.deleteCarInWaitlist(jylsh, jycs);
                             }
                             else
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,test_result);
+                                carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,test_result);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "检测结束上传失败", "ASM上传过程", 1);
                             }
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);
                             FileOpreate.SaveLog("流水号：" + jylsh + "上传失败", "ASM上传过程", 1);
                         }
 
@@ -1272,7 +1306,7 @@ namespace DataUpdate
                 catch (Exception er)
                 {
                     //更新YCLZT状态到实际执行到的位置
-                    carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
+                    carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
                     FileOpreate.SaveLog("数据上传错误原因：" + er.Message, "ASM上传错误", 1);
                 }
             }
@@ -1289,7 +1323,7 @@ namespace DataUpdate
 
                 if (dt_test_status.Rows.Count <= 0)
                 {
-                    //carinfodb.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
+                    //carinfobd.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
                     FileOpreate.SaveLog("VMAS上传线程传入数据为空" + obj.ToString(), "VAMS上传线程执行失败", 1);
                     return;
                 }
@@ -1307,9 +1341,9 @@ namespace DataUpdate
                         string error_info = "";
                         if (UpdateProjectStart(dt_test_status.Rows[0], out error_info))
                         {
-                            if (carinfodb.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
+                            if (carinfobd.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("2", jylsh, jycs);
+                                carinfobd.UpdateCarTestStatusYCLZT("2", jylsh, jycs);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "项目开始发送成功", "VMAS上传过程", 1);
                             }
                             else
@@ -1317,8 +1351,8 @@ namespace DataUpdate
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
-                            carinfodb.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
+                            carinfobd.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "不允许开始，原因：" + error_info, "VMAS上传过程", 1);
                             return;
                         }
@@ -1329,12 +1363,12 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "31"))
                         {
                            // yclzt = "31";
-                            carinfodb.UpdateCarTestStatusYCLZT("31", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("31", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "31发送成功", "VMAS上传过程", 1);
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs);//将该条记录置为上传失败记录
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs);//将该条记录置为上传失败记录
                             FileOpreate.SaveLog("流水号：" + jylsh + "31发送失败", "VMAS上传过程", 1);
                         }
                     }
@@ -1344,12 +1378,12 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "32"))
                         {
                             //yclzt = "32";
-                            carinfodb.UpdateCarTestStatusYCLZT("32", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("32", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "32发送成功", "VMAS上传过程", 1);
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs);//将该条记录置为上传失败记录
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs);//将该条记录置为上传失败记录
                             FileOpreate.SaveLog("流水号：" + jylsh + "32发送失败", "VMAS上传过程", 1);
                         }
                         //更新YCLZT到32
@@ -1360,12 +1394,12 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "33"))
                         {
                             //yclzt = "33";
-                            carinfodb.UpdateCarTestStatusYCLZT("33", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("33", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "33发送成功", "VMAS上传过程", 1);
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs);//将该条记录置为上传失败记录
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs);//将该条记录置为上传失败记录
                             FileOpreate.SaveLog("流水号：" + jylsh + "33发送失败", "VMAS上传过程", 1);
                         }
                         //更新YCLZT到33
@@ -1391,18 +1425,18 @@ namespace DataUpdate
                                 dr["检测方法"] = dt_test_status.Rows[0]["JCFF"].ToString();
                                 dr["上传成功时间"] = System.DateTime.Now.ToString();
                                 dt_AlreadyUpload.Rows.Add(dr);
-                                carinfodb.DeleteCarTestStatus(jylsh, jycs);
-                                carinfodb.deleteCarInWaitlist(jylsh, jycs);
+                                carinfobd.DeleteCarTestStatus(jylsh, jycs);
+                                carinfobd.deleteCarInWaitlist(jylsh, jycs);
                             }
                             else
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
+                                carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
                                 FileOpreate.SaveLog("流水号：" + jylsh + "检测结束上传失败", "VMAS上传过程", 1);
                             }
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,test_result);//将该条记录置为上传失败记录
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,test_result);//将该条记录置为上传失败记录
                             FileOpreate.SaveLog("流水号：" + jylsh + "上传失败", "VMAS上传过程", 1);
                         }
                     }
@@ -1413,7 +1447,7 @@ namespace DataUpdate
                 catch (Exception er)
                 {
                     //更新YCLZT状态到实际执行到的位置
-                    carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,er.Message);
+                    carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,er.Message);
                     FileOpreate.SaveLog("数据上传错误原因：" + er.Message, "Vmas上传错误", 1);
                 }
             }
@@ -1430,7 +1464,7 @@ namespace DataUpdate
 
                 if (dt_test_status.Rows.Count <= 0)
                 {
-                    //carinfodb.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
+                    //carinfobd.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
                     FileOpreate.SaveLog("SDS上传线程传入数据为空" + obj.ToString(), "SDS上传线程执行失败", 1);
                     return;
                 }
@@ -1448,9 +1482,9 @@ namespace DataUpdate
                         string error_info = "";
                         if (UpdateProjectStart(dt_test_status.Rows[0], out error_info))
                         {
-                            if (carinfodb.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
+                            if (carinfobd.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("2", jylsh, jycs);
+                                carinfobd.UpdateCarTestStatusYCLZT("2", jylsh, jycs);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "项目开始发送成功", "SDS上传过程", 1);
                             }
                             else
@@ -1458,8 +1492,8 @@ namespace DataUpdate
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
-                            carinfodb.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
+                            carinfobd.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "不允许开始，原因：" + error_info, "SDS上传过程", 1);
                             return;
                         }
@@ -1470,7 +1504,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "11"))
                         {
                             //yclzt = "11";
-                            carinfodb.UpdateCarTestStatusYCLZT("11", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("11", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "11发送成功", "SDS上传过程", 1);
                         }
                         else
@@ -1483,7 +1517,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "14"))
                         {
                             //yclzt = "11";
-                            carinfodb.UpdateCarTestStatusYCLZT("14", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("14", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "11发送成功", "SDS上传过程", 1);
                         }
                         else
@@ -1496,7 +1530,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "12"))
                         {
                             //yclzt = "11";
-                            carinfodb.UpdateCarTestStatusYCLZT("12", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("12", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "11发送成功", "SDS上传过程", 1);
                         }
                         else
@@ -1509,7 +1543,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "13"))
                         {
                             //yclzt = "11";
-                            carinfodb.UpdateCarTestStatusYCLZT("13", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("13", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "11发送成功", "SDS上传过程", 1);
                         }
                         else
@@ -1538,32 +1572,32 @@ namespace DataUpdate
                                 dr["上传成功时间"] = System.DateTime.Now.ToString();
                                 dt_AlreadyUpload.Rows.Add(dr);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "所有数据上传完毕", "SDS上传过程", 1);
-                                carinfodb.DeleteCarTestStatus(jylsh, jycs);
-                                carinfodb.deleteCarInWaitlist(jylsh, jycs);
+                                carinfobd.DeleteCarTestStatus(jylsh, jycs);
+                                carinfobd.deleteCarInWaitlist(jylsh, jycs);
                             }
                             else
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
+                                carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
                                 FileOpreate.SaveLog("流水号：" + jylsh + "检测结束上传失败", "SDS上传过程", 1);
                             }
 
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
                             FileOpreate.SaveLog("流水号：" + jylsh + "上传失败", "SDS上传过程", 1);
                         }
                         //更新YCLZT到6
                     }
 
                     //更新YCLZT状态到实际执行到的位置
-                    //carinfodb.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
+                    //carinfobd.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
                     UpdateStatus(jylsh, jycs, "备注", "当前数据上传完");
                 }
                 catch (Exception er)
                 {
                     //更新YCLZT状态到实际执行到的位置
-                    carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
+                    carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
                     FileOpreate.SaveLog("数据上传错误原因：" + er.Message, "SDS上传错误", 1);
                 }
             }
@@ -1580,7 +1614,7 @@ namespace DataUpdate
 
                 if (dt_test_status.Rows.Count <= 0)
                 {
-                    //carinfodb.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
+                    //carinfobd.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
                     FileOpreate.SaveLog("SDSM上传线程传入数据为空" + obj.ToString(), "SDSM上传线程执行失败", 1);
                     return;
                 }
@@ -1597,7 +1631,7 @@ namespace DataUpdate
                         string error_info = "";
                         if (UpdateProjectStart(dt_test_status.Rows[0], out error_info))
                         {
-                            if (carinfodb.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
+                            if (carinfobd.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
                             {
                                 yclzt = "2";
                                 FileOpreate.SaveLog("流水号：" + jylsh + "项目开始发送成功", "SDS上传过程", 1);
@@ -1607,8 +1641,8 @@ namespace DataUpdate
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
-                            carinfodb.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
+                            carinfobd.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "不允许开始，原因：" + error_info, "SDS上传过程", 1);
                             return;
                         }
@@ -1619,7 +1653,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "81"))
                         {
                             //yclzt = "81";
-                            carinfodb.UpdateCarTestStatusYCLZT("81", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("81", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "81发送成功", "SDSM上传过程", 1);
                         }
                         else
@@ -1632,7 +1666,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "82"))
                         {
                             //yclzt = "82";
-                            carinfodb.UpdateCarTestStatusYCLZT("82", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("82", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "82发送成功", "SDSM上传过程", 1);
                         }
                         else
@@ -1661,37 +1695,37 @@ namespace DataUpdate
                                 dr["上传成功时间"] = System.DateTime.Now.ToString();
                                 dt_AlreadyUpload.Rows.Add(dr);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "所有数据上传完毕", "SDSM上传过程", 1);
-                                carinfodb.DeleteCarTestStatus(jylsh, jycs);
-                                carinfodb.deleteCarInWaitlist(jylsh, jycs);
+                                carinfobd.DeleteCarTestStatus(jylsh, jycs);
+                                carinfobd.deleteCarInWaitlist(jylsh, jycs);
                             }
                             else
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
+                                carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
                                 FileOpreate.SaveLog("流水号：" + jylsh + "检测结束上传失败", "SDSM上传过程", 1);
                             }
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
                             FileOpreate.SaveLog("流水号：" + jylsh + "上传失败", "SDSM上传过程", 1);
                         }
                         //更新YCLZT到6
                     }
 
                     //更新YCLZT状态到实际执行到的位置
-                    //carinfodb.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
+                    //carinfobd.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
                     UpdateStatus(jylsh, jycs, "备注", "当前数据上传完");
                 }
                 catch (Exception er)
                 {
                     //更新YCLZT状态到实际执行到的位置
-                    carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
+                    carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
                     FileOpreate.SaveLog("数据上传错误原因：" + er.Message, "SDS上传错误", 1);
                 }
             }
             catch (Exception er)
             {
-                //carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
+                //carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
                 FileOpreate.SaveLog("线程运行错误原因：" + er.Message, "ASM上传线程错误", 1);
             }
         }
@@ -1703,7 +1737,7 @@ namespace DataUpdate
 
                 if (dt_test_status.Rows.Count <= 0)
                 {
-                    //carinfodb.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
+                    //carinfobd.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
                     FileOpreate.SaveLog("JZJS上传线程传入数据为空" + obj.ToString(), "JZJS上传线程执行失败", 1);
                     return;
                 }
@@ -1721,7 +1755,7 @@ namespace DataUpdate
                         string error_info = "";
                         if (UpdateProjectStart(dt_test_status.Rows[0], out error_info))
                         {
-                            if (carinfodb.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
+                            if (carinfobd.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
                             {
                                 yclzt = "2";
                                 FileOpreate.SaveLog("流水号：" + jylsh + "项目开始发送成功", "JZJS上传过程", 1);
@@ -1731,8 +1765,8 @@ namespace DataUpdate
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
-                            carinfodb.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
+                            carinfobd.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "不允许开始，原因：" + error_info, "JZJS上传过程", 1);
                             return;
                         }
@@ -1743,7 +1777,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "41"))
                         {
                             //yclzt = "41";
-                            carinfodb.UpdateCarTestStatusYCLZT("41", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("41", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "41发送成功", "JZJS上传过程", 1);
                         }
                         else
@@ -1756,7 +1790,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "42"))
                         {
                             //yclzt = "42";
-                            carinfodb.UpdateCarTestStatusYCLZT("42", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("42", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "42发送成功", "JZJS上传过程", 1);
                         }
                         else
@@ -1769,7 +1803,7 @@ namespace DataUpdate
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "43"))
                         {
                            // yclzt = "43";
-                            carinfodb.UpdateCarTestStatusYCLZT("43", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("43", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "43发送成功", "JZJS上传过程", 1);
                         }
                         else
@@ -1799,31 +1833,31 @@ namespace DataUpdate
                                 dr["检测方法"] = dt_test_status.Rows[0]["JCFF"].ToString();
                                 dr["上传成功时间"] = System.DateTime.Now.ToString();
                                 dt_AlreadyUpload.Rows.Add(dr);
-                                carinfodb.DeleteCarTestStatus(jylsh, jycs);
-                                carinfodb.deleteCarInWaitlist(jylsh, jycs);
+                                carinfobd.DeleteCarTestStatus(jylsh, jycs);
+                                carinfobd.deleteCarInWaitlist(jylsh, jycs);
                             }
                             else
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
+                                carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
                                 FileOpreate.SaveLog("流水号：" + jylsh + "检测结束上传失败", "JZJS上传过程", 1);
                             }
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);//将该条记录置为上传失败记录
                             FileOpreate.SaveLog("流水号：" + jylsh + "上传失败", "JZJS上传过程", 1);
                         }
                         //更新YCLZT到6
                     }
 
                     //更新YCLZT状态到实际执行到的位置
-                    //carinfodb.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
+                    //carinfobd.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
                     UpdateStatus(jylsh, jycs, "备注", "当前数据上传完");
                 }
                 catch (Exception er)
                 {
                     //更新YCLZT状态到实际执行到的位置
-                    carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
+                    carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, er.Message);
                     FileOpreate.SaveLog("数据上传错误原因：" + er.Message, "JZJS上传错误", 1);
                 }
             }
@@ -1840,7 +1874,7 @@ namespace DataUpdate
 
                 if (dt_test_status.Rows.Count <= 0)
                 {
-                    //carinfodb.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
+                    //carinfobd.UpdateCarTestStatusYCLZT(dr_temp["YCLZT"].ToString(), dr_temp["JYLSH"].ToString(), dr_temp["JYCS"].ToString());
                     FileOpreate.SaveLog("ZYJS上传线程传入数据为空" + obj.ToString(), "ZYJS上传线程执行失败", 1);
                     return;
                 }
@@ -1857,9 +1891,9 @@ namespace DataUpdate
                         string error_info = "";
                         if (UpdateProjectStart(dt_test_status.Rows[0], out error_info))
                         {
-                            if (carinfodb.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
+                            if (carinfobd.UpdateCarTestStatusZT("2", jylsh, jycs, error_info))
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("2", jylsh, jycs);
+                                carinfobd.UpdateCarTestStatusYCLZT("2", jylsh, jycs);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "项目开始发送成功", "ZYJS上传过程", 1);
                             }
                             else
@@ -1869,8 +1903,8 @@ namespace DataUpdate
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
-                            carinfodb.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusZT("3", jylsh, jycs, error_info);
+                            carinfobd.UpdateCarTestStatusYCLZT("0", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "不允许开始，原因：" + error_info, "ZYJS上传过程", 1);
                             return;
                         }
@@ -1880,7 +1914,7 @@ namespace DataUpdate
                         //发51照片
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "51"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("51", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("51", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "51发送成功", "ZYJS上传过程", 1);
                         }
                         else
@@ -1894,7 +1928,7 @@ namespace DataUpdate
                         //发52
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "52"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("52", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("52", jylsh, jycs);
                             FileOpreate.SaveLog("流水号：" + jylsh + "52发送成功", "ZYJS上传过程", 1);
                         }
                         else
@@ -1906,7 +1940,7 @@ namespace DataUpdate
                         //发53
                         if (UpdateCapturePicture(dt_test_status.Rows[0], "53"))
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("53", jylsh, jycs);
+                            carinfobd.UpdateCarTestStatusYCLZT("53", jylsh, jycs);
                             //yclzt = "53";
                             FileOpreate.SaveLog("流水号：" + jylsh + "53发送成功", "ZYJS上传过程", 1);
                         }
@@ -1935,32 +1969,32 @@ namespace DataUpdate
                                 dr["检测方法"] = dt_test_status.Rows[0]["JCFF"].ToString();
                                 dr["上传成功时间"] = System.DateTime.Now.ToString();
                                 dt_AlreadyUpload.Rows.Add(dr);
-                                carinfodb.DeleteCarTestStatus(jylsh, jycs);
-                                carinfodb.deleteCarInWaitlist(jylsh, jycs);
+                                carinfobd.DeleteCarTestStatus(jylsh, jycs);
+                                carinfobd.deleteCarInWaitlist(jylsh, jycs);
                             }
                             else
                             {
-                                carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);
+                                carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs, test_result);
                                 FileOpreate.SaveLog("流水号：" + jylsh + "检测结束上传失败", "ZYJS上传过程", 1);
                             }
 
                         }
                         else
                         {
-                            carinfodb.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,test_result);
+                            carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs,test_result);
                             FileOpreate.SaveLog("流水号：" + jylsh + "过程数据上传失败", "ZYJS上传过程", 1);
                         }
                         //更新YCLZT到6
                     }
 
                     //更新YCLZT状态到实际执行到的位置
-                    carinfodb.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
+                    //carinfobd.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
                     UpdateStatus(jylsh, jycs, "备注", "当前数据上传完");
                 }
                 catch (Exception er)
                 {
                     //更新YCLZT状态到实际执行到的位置
-                    carinfodb.UpdateCarTestStatusYCLZT(yclzt, jylsh, jycs);
+                    carinfobd.UpdateCarTestStatusYCLZT("-1", jylsh, jycs);
                     FileOpreate.SaveLog("数据上传错误原因：" + er.Message, "ZYJS上传错误", 1);
                 }
             }
@@ -1980,7 +2014,7 @@ namespace DataUpdate
                 error_info = "";
                 string jycs = TestStatus["JYCS"].ToString();
                 string jylsh = TestStatus["JYLSH"].ToString();
-                DataTable dt = carinfodb.getOutLookCheck(jylsh);
+                DataTable dt = carinfobd.getOutLookCheck(jylsh);
                 if (dt == null || dt.Rows.Count == 0)
                 {
                     error_info = "未找到该车外检记录，请先进行外检";
@@ -2036,15 +2070,16 @@ namespace DataUpdate
         //瞬态检测结果发送
         private bool UpdateResult(string jcff,string jylsh, string jycs, out string test_result)
         {
+            //int zt = int.Parse(YCLZT);
             test_result = "";
             try
             {
                 DataRow obj_result = null;
                 DataRow obj_process = null;
                 DataRow obj_car = null;
-                carinfodb.getTestResult(jcff=="ZYJS"?"Zyjs_Btg":jcff, jylsh, jycs, out obj_result);
-                carinfodb.getProcessData(jcff+"_DATASECONDS", jylsh, jycs, out obj_process);
-                carinfodb.getVehicleData("已检车辆信息", jylsh, jycs, out obj_car);
+                carinfobd.getTestResult(jcff=="ZYJS"?"Zyjs_Btg":jcff, jylsh, jycs, out obj_result);
+                carinfobd.getProcessData(jcff+"_DATASECONDS", jylsh, jycs, out obj_process);
+                carinfobd.getVehicleData("已检车辆信息", jylsh, jycs, out obj_car);
                 if (obj_result==null)
                 {
                     test_result = "没有找到结果数据";
@@ -2067,8 +2102,9 @@ namespace DataUpdate
                 bool isOBDChecked = (obj_car["OBD"].ToString() == "Y" || obj_car["OBD"].ToString() == "有" || obj_car["OBD"].ToString() == "是" || obj_car["OBD"].ToString() == "1");
                 if(isOBDChecked)
                 {
-                    DataRow obj_obdresult = null;
-                    carinfodb.getOBDResult(clid, out obj_obdresult);
+                        DataRow obj_obdresult = null;
+                    carinfobd.getOBDResult(clid, out obj_obdresult);
+                    
                     if (obj_obdresult == null)
                     {
                         test_result = "没有找到OBD数据";
@@ -2103,13 +2139,15 @@ namespace DataUpdate
                     FileOpreate.SaveLog("未进行OBD检测，不用上传OBD检测", "[" + jylsh + "]上传过程", 1);
                 }
                 string testingid = "";
+                
                 if (!interfaceUploadJh.uploadExhaustResult(obj_car, obj_result, out testingid))
                 {
                     test_result = "发送"+jcff+"结果数据失败";
                     FileOpreate.SaveLog("发送" + jcff + "结果数据失败", "[" + jylsh + "]上传过程错误", 1);
                     return false;
                 }
-                FileOpreate.SaveLog("发送VMAS结果数据成功", "VMAS结果数据发送", 1);
+                updateTestingID(clid, testingid);
+                FileOpreate.SaveLog("发送结果数据成功", "[" + jylsh + "]上传过程", 1);
                 if (!interfaceUploadJh.uploadExhaustProcess(obj_car, obj_process,testingid))
                 {
                     test_result = "发送" + jcff + "过程数据失败";
@@ -2117,6 +2155,17 @@ namespace DataUpdate
                     return false;
                 }
                 FileOpreate.SaveLog("发送" + jcff + "过程数据成功", "[" + jylsh + "]上传过程", 1);
+                string jcbgbh = "";
+                if(!interfaceUploadJh.getTestNo(testingid,out jcbgbh))
+                {
+                    FileOpreate.SaveLog("获取testingid=" + testingid + "检测报告单编号失败，可以平台上查询 原因", "[" + jylsh + "]上传过程错误", 1);
+                    updateJCBGBH(clid, "");
+                }
+                else
+                {
+                    FileOpreate.SaveLog("获取testingid=" + testingid + "检测报告单编号成功，testno="+jcbgbh, "[" + jylsh + "]上传过程", 1);
+                    updateJCBGBH(clid, jcbgbh);
+                }
                 return true;
 
             }
@@ -2150,19 +2199,19 @@ namespace DataUpdate
                         FileOpreate.SaveLog("【设备标定数据】|ID=" + id + "|LX=" + lx + "|数据上传成功", "标定数据发送", 1);
                         
                         //Update_ZjBd_Log(lineid, int.Parse(temp_dt_bddata.Rows[0]["LX"].ToString()), "已上传");
-                        carinfodb.UpdateBDZT("1", id,++uploadTimes);
+                        carinfobd.UpdateBDZT("1", id,++uploadTimes);
                     }
                     else
                     {
                         FileOpreate.SaveLog("！！！！【设备标定数据】|ID=" + id + "|LX=" + lx + "|数据上传失败！！！！", "标定数据发送", 1);
                         //上传不成功则将状态改回0
-                        carinfodb.UpdateBDZT("0", id, ++uploadTimes);
+                        carinfobd.UpdateBDZT("0", id, ++uploadTimes);
                     }
                 }
                 catch (Exception er)
                 {
                     FileOpreate.SaveLog("！！！！【设备标定数据】|ID=" + id + "|LX=" + lx + "|数据上传发生异常：" + er.Message + "！！！！", "标定数据发送", 1);
-                    carinfodb.UpdateBDZT("0", id, ++uploadTimes);
+                    carinfobd.UpdateBDZT("0", id, ++uploadTimes);
                 }
             }
             catch (Exception er)
@@ -2190,19 +2239,19 @@ namespace DataUpdate
                     {
                         FileOpreate.SaveLog("【设备自检数据】|ID=" + id + "|LX=" + lx + "|数据上传成功", "标定数据发送", 1);
                        // Update_ZjBd_Log(lineid, int.Parse(temp_dt_bddata.Rows[0]["LX"].ToString()), "已上传");
-                        carinfodb.UpdateSelfCheckZT("1", id, ++uploadTimes);
+                        carinfobd.UpdateSelfCheckZT("1", id, ++uploadTimes);
                     }
                     else
                     {
                         FileOpreate.SaveLog("！！！！【设备自检数据】|ID=" + id + "|LX=" + lx + "|数据上传失败！！！！", "标定数据发送", 1);
                         //上传不成功则将状态改回0
-                        carinfodb.UpdateSelfCheckZT("0", id, ++uploadTimes);
+                        carinfobd.UpdateSelfCheckZT("0", id, ++uploadTimes);
                     }
                 }
                 catch (Exception er)
                 {
                     FileOpreate.SaveLog("！！！！【设备自检数据】|ID=" + id + "|LX=" + lx + "|数据上传发生异常：" + er.Message + "！！！！", "标定数据发送", 1);
-                    carinfodb.UpdateSelfCheckZT("0", id, ++uploadTimes);
+                    carinfobd.UpdateSelfCheckZT("0", id, ++uploadTimes);
                 }
             }
             catch (Exception er)
@@ -2229,7 +2278,7 @@ namespace DataUpdate
         private void 数据库升级ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //alter table [车辆检测状态] alter column BZ varchar(max)
-            if (carinfodb.updateSQL())
+            if (carinfobd.updateSQL())
                 MessageBox.Show("数据库升级成功！");
             else
                 MessageBox.Show("数据库升级失败！");
@@ -2326,7 +2375,7 @@ namespace DataUpdate
 
             try
             {
-                DataTable CarTestStatusTable = carinfodb.getCarUploadFailed();//获取车辆检测状态表
+                DataTable CarTestStatusTable = carinfobd.getCarUploadFailed();//获取车辆检测状态表
                 #region 显示 
                 dt_UploadFailed.Clear();
                 if (CarTestStatusTable != null && CarTestStatusTable.Rows.Count > 0)
