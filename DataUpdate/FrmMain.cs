@@ -1831,7 +1831,7 @@ namespace DataUpdate
                                 dr["检验次数"] = dt_test_status.Rows[0]["JYCS"].ToString();
                                 dr["检验时间"] = dt_test_status.Rows[0]["JCSJ"].ToString();
                                 dr["检测方法"] = dt_test_status.Rows[0]["JCFF"].ToString();
-                                dr["上传成功时间"] = System.DateTime.Now.ToString();
+                                dr["上传成功时间"] = System.DateTime.Now.ToString(); 
                                 dt_AlreadyUpload.Rows.Add(dr);
                                 carinfobd.DeleteCarTestStatus(jylsh, jycs);
                                 carinfobd.deleteCarInWaitlist(jylsh, jycs);
